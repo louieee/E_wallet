@@ -273,3 +273,4 @@ fabric.properties
 # mypy
 
 # Pyre type checker
+*.sqlite

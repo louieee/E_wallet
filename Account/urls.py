@@ -15,7 +15,7 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
-from .views import home, dashboard, login, signup, update_image, edit_profile, logout
+from .views import home, dashboard, login, signup, update_image, edit_profile, logout, forgot_password, enter_key
 urlpatterns = [
     path('', home, name='home'),
     path('dashboard/', dashboard, name="dashboard"),
@@ -23,5 +23,7 @@ urlpatterns = [
     path('signup/', signup, name="signup"),
     path('update_image/', update_image, name='update_image'),
     path('edit_profile/', edit_profile, name='edit_profile'),
+    path('forgot_password/', forgot_password, name="forgot_password"),
+    path('verify/', enter_key, name='verify'),
     path('logout/', logout, name="logout")
 ]

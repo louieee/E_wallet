@@ -1,0 +1,268 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="zxx">
+
+<!-- Mirrored from xvelopers.com/demos/html/paper-panel/ by HTTrack Website Copier/3.x [XR&CO'2014], Wed, 05 May 2021 07:14:09 GMT -->
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <link rel="icon" href="{% static 'dashboard/assets/img/basic/favicon.ico'%}" type="image/x-icon">
+    <title>{% block title %}{% endblock title %} || E-Wallet|| The smart E-Commerce Platform. Save, Invest, Retire</title>
+    <!-- CSS -->
+    <link rel="stylesheet" href="{% static 'dashboard/assets/css/app.css'%}">
+    <link rel="stylesheet" href="{% static 'dashboard/assets/css/mycss.css' %}">
+    <style>
+        .loader {
+            position: fixed;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: #F5F8FA;
+            z-index: 9998;
+            text-align: center;
+        }
+
+        .plane-container {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+        }
+    </style>
+
+<script>
+  (function(){var w=window;var ic=w.callbell;if(typeof ic==="function"){ic('reattach_activator');ic('update',callbellSettings);}else{var d=document;var i=function(){i.c(arguments)};i.q=[];i.c=function(args){i.q.push(args)};w.Callbell=i;var l=function(){var s=d.createElement('script');s.type='text/javascript';s.async=true;s.src='https://dash.callbell.eu/include/'+window.callbellSettings.token+'.js';var x=d.getElementsByTagName('script')[0];x.parentNode.insertBefore(s,x);};if(w.attachEvent){w.attachEvent('onload',l);}else{w.addEventListener('load',l,false);}}})()
+</script>
+    <!-- Js -->
+    <!--
+    --- Head Part - Use Jquery anywhere at page.
+    --- http://writing.colin-gourlay.com/safely-using-ready-before-including-jquery/
+    -->
+    <script>(function(w,d,u){w.readyQ=[];w.bindReadyQ=[];function p(x,y){if(x=="ready"){w.bindReadyQ.push(y);}else{w.readyQ.push(x);}}var a={ready:p,bind:p};w.$=w.jQuery=function(f){if(f===d||f===u){return a}else{p(f)}}})(window,document)</script>
+</head>
+<body class="light">
+<!-- Pre loader -->
+<div id="loader" class="loader">
+    <div class="plane-container">
+        <div class="preloader-wrapper small active">
+            <div class="spinner-layer spinner-blue">
+                <div class="circle-clipper left">
+                    <div class="circle"></div>
+                </div><div class="gap-patch">
+                <div class="circle"></div>
+            </div><div class="circle-clipper right">
+                <div class="circle"></div>
+            </div>
+            </div>
+
+            <div class="spinner-layer spinner-red">
+                <div class="circle-clipper left">
+                    <div class="circle"></div>
+                </div><div class="gap-patch">
+                <div class="circle"></div>
+            </div><div class="circle-clipper right">
+                <div class="circle"></div>
+            </div>
+            </div>
+
+            <div class="spinner-layer spinner-yellow">
+                <div class="circle-clipper left">
+                    <div class="circle"></div>
+                </div><div class="gap-patch">
+                <div class="circle"></div>
+            </div><div class="circle-clipper right">
+                <div class="circle"></div>
+            </div>
+            </div>
+
+            <div class="spinner-layer spinner-green">
+                <div class="circle-clipper left">
+                    <div class="circle"></div>
+                </div><div class="gap-patch">
+                <div class="circle"></div>
+            </div><div class="circle-clipper right">
+                <div class="circle"></div>
+            </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div id="app">
+{#    side bar #}
+{%  if request.user.is_authenticated %}
+<aside class="main-sidebar fixed offcanvas shadow" data-toggle='offcanvas'>
+    <section class="sidebar">
+        <div class="w-80px mt-3 mb-3 ml-3">
+            <a href="{% url 'home' %}">
+             <h4 class="text-info font-weight-bold">E-<span class="text-warning">Wallet</span></h4>
+            </a>
+
+        </div>
+        <div class="relative">
+            <div class="user-panel p-3 light mb-2">
+                <div>
+                    <div class="float-left image">
+                        <img id="user_img" class="user_avatar"
+                             {% if not investor.profile_picture %}
+                                src="{% static 'dashboard/assets/img/dummy/u1.png'%}"
+                             {% else %}
+                                src="{{ investor.profile_picture.url }}"
+                             {% endif %}
+                             alt="User Image">
+                    <form id="img_form" method="post" action="{% url 'update_image' %}" enctype="multipart/form-data">
+                    {% csrf_token %}
+                        <input id="upload_img"  name="user_img" accept="image/jpeg" type="file" class="d-none">
+            </form>
+                    </div>
+                    <div class="float-left info">
+                        <h6 class="font-weight-light mt-2 mb-1">{{ investor.first_name }} {{ investor.last_name }}</h6>
+                        <h6 class="font-weight-bold mt-2 mb-1 ">{{ investor.username }}</h6>
+                        <a href="{% url 'edit_profile' %}" class="btn btn-xs btn-info mx-0">Edit Profile</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <ul class="sidebar-menu">
+            <li class="treeview no-b"><a href="{% url 'dashboard' %}">
+                <i class="icon icon-package light-green-text s-18"></i>
+                <span>Dashboard</span>
+            </a>
+            <li class="treeview no-b"><a href="{% url 'deposit' %}">
+                <i class="icon icon-package light-green-text s-18"></i>
+                <span>Make Deposit</span>
+            </a>
+            </li>
+            <li class="treeview no-b"><a href="{% url 'withdraw' %}">
+                <i class="icon icon-package light-green-text s-18"></i>
+                <span>Make Withdrawal</span>
+            </a>
+            </li>
+            <li class="treeview no-b"><a href="{% url 'transfer' %}">
+                <i class="icon icon-package light-green-text s-18"></i>
+                <span>Make Transfer</span>
+            </a>
+            </li>
+            <li class="treeview"><a href="#">
+                <i class="icon icon-sailing-boat-water purple-text s-18"></i> <span>Transactions</span> <i
+                    class="icon icon-angle-left s-18 pull-right"></i></a>
+                <ul class="treeview-menu">
+                    <li class="treeview no-b"><a href="{% url 'transactions'%}?type=deposit">
+                        <i class="icon icon-package light-green-text s-18"></i>
+                        <span>Deposits</span>
+                        <span class="badge r-3 badge-success pull-right">{{ deposit_count }}</span>
+                    </a>
+
+                    </li>
+                    <li class="treeview no-b"><a href="{% url 'transactions'%}?type=withdraw">
+                        <i class="icon icon-package light-green-text s-18"></i>
+                        <span>Withdrawals</span>
+                        <span class="badge r-3 badge-success pull-right">{{ withdraw_count }}</span>
+                    </a>
+
+                    </li>
+                    <li class="treeview no-b"><a href="{% url 'transactions'%}?type=transfer">
+                        <i class="icon icon-package light-green-text s-18"></i>
+                        <span>Transfers</span>
+                        <span class="badge r-3 badge-success pull-right">{{ commission_count }}</span>
+                    </a>
+
+                    </li>
+                </ul>
+            </li>
+            <li class="treeview no-b"><a href="{% url 'logout' %}">
+                <i class="icon icon-package light-green-text s-18"></i>
+                <span>Logout</span>
+            </a>
+            </li>
+
+        </ul>
+    </section>
+</aside>
+{% endif %}
+<!--Sidebar End-->
+<div class="has-sidebar-left">
+    <div class="pos-f-t">
+    <div class="collapse" id="navbarToggleExternalContent">
+        <div class="bg-dark pt-2 pb-2 pl-4 pr-2">
+            <a href="#" data-toggle="collapse" data-target="#navbarToggleExternalContent" aria-expanded="false"
+               aria-label="Toggle navigation" class="paper-nav-toggle paper-nav-white active "><i></i></a>
+        </div>
+    </div>
+</div>
+</div>
+<div class="page {% if request.user.is_authenticated %}has-sidebar-left{% endif %} height-full">
+{#    header#}
+    <header class="blue accent-3 relative nav-sticky">
+        <div class="container-fluid text-white">
+            <div class="row p-t-b-10 ">
+                <div class="col">
+                    {% if request.user.is_authenticated  %}
+                    <h4>
+                        <i class="icon-smiling-face"></i>
+                        Welcome User
+                    </h4>
+                        {% else %}
+                            <a href="{% url 'home' %}">
+                                <h3 class="text-info font-weight-bold" style="color:#fcce54!important;">E-<span style="color:#ffffff!important;">Wallet</span></h3>
+                            </a>
+                    {% endif %}
+                </div>
+                {% if request.user.is_authenticated %}
+                <a class="btn-fab absolute fab-right-bottom btn-primary" data-toggle="push-menu">
+                    <i class="icon icon-menu"></i>
+                </a>
+                {% endif %}
+            </div>
+        </div>
+    </header>
+{% if message %}
+<div class="row m-3 mt-4">
+    <div class="col-md-12">
+        <div class="alert alert-{{ status }} alert-dismissible text-center" role="alert">
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">×</span>
+                </button>
+                {{ message }}
+            </div>
+    </div>
+    </div>
+{% endif %}
+{% block content %}
+
+{% endblock %}
+
+</div>
+<!-- Right Sidebar -->
+<div class="control-sidebar-bg shadow white fixed"></div>
+</div>
+<!--/#app -->
+<script src="{% static 'dashboard/assets/js/app.js'%}"></script>
+
+
+
+
+<!--
+--- Footer Part - Use Jquery anywhere at page.
+--- http://writing.colin-gourlay.com/safely-using-ready-before-including-jquery/
+-->
+<script>(function($,d){$.each(readyQ,function(i,f){$(f)});$.each(bindReadyQ,function(i,f){$(d).bind("ready",f)})})(jQuery,document)</script>
+<script>
+    const file_ = document.getElementById('upload_img')
+    const user_img = document.getElementById('user_img')
+    const form_img = document.getElementById('img_form')
+    user_img.onclick =()=>{
+        file_.click()
+    }
+    file_.onchange =()=>{
+        form_img.submit()
+    }
+</script>
+{% block script %}
+{% endblock %}
+
+</body>
+
+<!-- Mirrored from xvelopers.com/demos/html/paper-panel/ by HTTrack Website Copier/3.x [XR&CO'2014], Wed, 05 May 2021 07:14:33 GMT -->
+</html>

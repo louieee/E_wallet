@@ -1,0 +1,115 @@
+{% extends 'index.html' %}
+
+{% load static %}
+
+{% block content %}
+    <div class="container-fluid my-3">
+        <div class="d-flex row">
+            <div class="col-md-12">
+                    <div class="card my-3 shadow no-b r-0">
+                        <div class="card-header white">
+                            <h6>Edit Profile</h6>
+                        </div>
+                        <div class="card-body">
+                            <form action="{% url 'edit_profile' %}" method="post">
+                                {% csrf_token %}
+                                <div class="form-row">
+                                    <div class="col-md-4 mb-3">
+                                        <label for="validationServer01">First name</label>
+                                        <input type="text" name="first_name" class="form-control" id="validationServer01" value="{{ request.user.first_name }}" >
+                                        <div class="valid-feedback">
+                                            Looks good!
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4 mb-3">
+                                        <label for="validationServer02">Last name</label>
+                                        <input type="text" name="last_name" class="form-control" id="validationServer02"  value="{{ request.user.last_name }}" >
+                                        <div class="valid-feedback">
+                                            Looks good!
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4 mb-3">
+                                        <label for="validationServerUsername">Username</label>
+                                        <div class="input-group">
+                                            <div class="input-group-prepend">
+                                                <span class="input-group-text" id="inputGroupPrepend3">@</span>
+                                            </div>
+                                            <input type="text" name="username" value="{{ request.user.username }}" class="form-control" id="validationServerUsername"  aria-describedby="inputGroupPrepend3" >
+                                            <div class="invalid-feedback">
+                                                Please choose a username.
+                                            </div>
+                                            <div class="valid-feedback">
+                                            Looks good!
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <button class="btn btn-success" type="submit">Submit</button>
+                            </form>
+                        </div>
+                    </div>
+                <form></form>
+                <div class="card my-3 shadow no-b r-0">
+                        <div class="card-header white">
+                            <h6>Change Password</h6>
+                        </div>
+                        <div class="card-body">
+                            <form id="password_form" action="{% url 'change_password' %}" method="post">
+                                {% csrf_token %}
+                                <div class="form-row">
+                                    <div class="col-md-12 mb-3">
+                                        <label for="validationServer01">Old Password</label>
+                                        <input name="old_password" type="password" class="form-control" id="validationServer01" placeholder="Old Password" required>
+                                        <div class="valid-feedback">
+                                            Looks good!
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="form-row">
+                                    <div class="col-md-6 mb-3">
+                                        <label for="validationServer02">New Password</label>
+                                        <input name="new_password1" id="new_pass1" type="password" class="form-control"  placeholder="New Password" required>
+                                        <div class="valid-feedback">
+                                            Looks good!
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6 mb-3">
+                                        <label for="validationServer02">Re-Enter New Password</label>
+                                        <input name="new_password2" id="new_pass2"  type="password" class="form-control"  placeholder="Re-Enter Password" required>
+                                        <small id="small_pass" class="text-danger d-none">
+                                            The two passwords are not the same!
+                                        </small>
+                                    </div>
+                                </div>
+                                <button id="sub_pass" class="btn btn-success" type="submit">Submit</button>
+                            </form>
+                        </div>
+                    </div>
+        </div>
+    </div>
+{% endblock %}
+
+
+
+{% block script %}
+    <script>
+        const pass1 = document.getElementById('new_pass1')
+        const pass2 = document.getElementById('new_pass2')
+        const sub_pass = document.getElementById('sub_pass')
+        const small_pass = document.getElementById('small_pass')
+
+
+        sub_pass.onclick =()=>{
+            if (pass1.value !== pass2.value){
+                small_pass.className = small_pass.className.replace('d-none', '')
+            }else{
+                 small_pass.className = `${small_pass.className} d-none`
+                 document.getElementById('password_form').submit()
+            }
+        }
+    </script>
+{% endblock %}
+
+{% block title %}
+    Edit Profile
+{% endblock %}

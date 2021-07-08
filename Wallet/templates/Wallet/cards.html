@@ -3,7 +3,87 @@
     Cards
 {% endblock %}
 {% block content %}
-    <section></section>
+    <div class="container-fluid animatedParent animateOnce">
+        <div class="tab-content my-3" id="v-pills-tabContent">
+            <div class="tab-pane animated fadeInUpShort show active" id="v-pills-all" role="tabpanel" aria-labelledby="v-pills-all-tab">
+                <div class="row my-3">
+                    <div class="col-md-12">
+                        <div class="card r-0 shadow">
+                            <div class="table-responsive p-3">
+                                <h5>{{ type }} Transaction History</h5>
+                                <br/>
+                                {% if transactions.count > 0 %}
+                                <form>
+                                    <table class="table table-striped table-hover r-0">
+                                        <thead>
+                                        <tr class="no-b">
+                                            <th>AMOUNT</th>
+                                            {% if type != 'Referral Commission' %}
+                                            <th>WALLET</th>
+                                            <th>IDENTIFIER</th>
+                                                {% endif %}
+                                            {% if type == 'Referral Commission' %}
+                                                <th>REFEREE</th>
+                                            {% endif %}
+                                            <th>DATE</th>
+                                            <th>TIME</th>
+                                            <th>STATUS</th>
+                                        </tr>
+                                        </thead>
+
+                                        <tbody>
+                                    {% for transaction in transactions %}
+                                        <tr>
+                                            <td>#<span class="sc-counter">{{ transaction.amount_in_dollars }}</span></td>
+                                            {% if transaction.deposit_wallet %}
+                                                <td>{{ transaction.deposit_wallet.get_deposit_option_display }}</td>
+                                                <td>{{ transaction.deposit_wallet.deposit_identifier }}</td>
+                                            {% else %}
+                                                 {% if type != 'Referral Commission' %}
+                                                <td>{{ transaction.investor.wallet.option}}</td>
+                                                <td>{{ transaction.investor.wallet.withdrawal_identifier }}</td>
+                                                {% endif %}
+                                                 {% if type == 'Referral Commission' %}
+                                                     <td>{{ transaction.referer}}</td>
+                                                 {% endif %}
+                                             {% endif %}
+                                            <td>{{ transaction.date_created.date }}</td>
+
+                                            <td>{{ transaction.date_created.time }}</td>
+                                            {% if transaction.confirmed %}
+                                                <td><span class="r-3 badge badge-success ">Confirmed</span></td>
+                                            {% else %}
+                                                <td><span class="r-3 badge badge-warning ">Pending</span></td>
+                                            {% endif %}
+                                        </tr>
+                                        {% endfor %}
+
+                                        </tbody>
+                                    </table>
+                                </form>
+                                {% else %}
+                                    {% if type == 'Referral Commission' %}
+                                        <h6>You do not have any {{ type }}s.</h6>
+                                        {% else %}
+                                    <h6>You have not made any {{ type }} transaction.</h6>
+                                        {% endif %}
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!--Add New Message Fab Button-->
+    <a
+            {% if type == 'Deposit' %}
+                href="{% url 'deposit' %}"
+            {% elif type == 'Withdrawal' %}
+                href="{% url 'withdraw' %}"
+            {% endif %}
+            class="btn-fab btn-fab-md fab-right fab-right-bottom-fixed shadow btn-primary"><i
+            class="icon-add"></i></a>
 {% endblock %}
 {% block script %}
     <script></script>

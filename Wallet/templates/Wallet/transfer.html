@@ -3,8 +3,158 @@
     Transfer
 {% endblock %}
 {% block content %}
-    <section></section>
+    <div class="container-fluid my-3">
+        <div class="d-flex row">
+            <div class="col-md-7">
+                    <!-- Basic Validation -->
+                    <div class="card mb-3 shadow no-b r-0">
+                        <div class="card-header white">
+                            <h6>Invest</h6>
+                        </div>
+                        <div class="card-body">
+                            <form id="i_form" class="needs-validation" novalidate method="post" action="{% url 'deposit' %}">
+                                {% csrf_token %}
+                                <div class="form-row">
+                                    <div class="col-md-12 mb-3">
+                                        <label for="validationCustom01">Investment Plan</label>
+                                            {% if not plan %}
+                                                 <select name="plan" id="plan" class="form-control">
+                                                <option selected>Select a Plan</option>
+                                                {% for plan in plans %}
+                                                <option >{{ plan }}</option>
+                                                {% endfor %}
+                                            {% else %}
+                                                 <select name="plan" id="plan" class="form-control" disabled>
+                                                 <option selected>{{ plan }}</option>
+                                            {% endif %}
+                                        </select>
+                                        <div class="valid-feedback">
+                                            Looks good!
+                                        </div>
+                                    </div>
+                                </div>
+                                 <div class="form-row">
+                                    <div class="col-md-12 mb-3">
+                                        <label for="validationCustom03">Amount</label>
+                                        <input id="form_amt"  name="amount" type="text" class="form-control"  placeholder="Amount" required>
+                                        <small id="amt_warn" class="text-danger d-none">
+
+                                        </small>
+                                    </div>
+                                 </div>
+
+                            </form>
+
+                            <script>
+                                // Example starter JavaScript for disabling form submissions if there are invalid fields
+                                (function() {
+                                    'use strict';
+                                    window.addEventListener('load', function() {
+                                        // Fetch all the forms we want to apply custom Bootstrap validation styles to
+                                        var forms = document.getElementsByClassName('needs-validation');
+                                        // Loop over them and prevent submission
+                                        var validation = Array.prototype.filter.call(forms, function(form) {
+                                            form.addEventListener('submit', function(event) {
+                                                if (form.checkValidity() === false) {
+                                                    event.preventDefault();
+                                                    event.stopPropagation();
+                                                }
+                                                form.classList.add('was-validated');
+                                            }, false);
+                                        });
+                                    }, false);
+                                })();
+                            </script>
+                        </div>
+                    </div>
+                    <!-- #END# Basic Validation -->
+                </div>
+            <div class="col-md-5">
+                <div class="card no-b shadow">
+                    <div class="card-body">
+                        <div class="my-4">
+                            <span class="badge badge-success badge-pill">Investment</span>
+
+                        </div>
+                         <div class="my-3">
+                             <small>Investment Plan</small>
+                             <h3 id="show_plan">{% if plan %}{{ plan }}{% else %}************{% endif %}</h3>
+                         </div>
+                        <div class="my-3">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <strong> <small>Invested Amount: </small></strong>
+                                  <div class="text-primary s-24 my-3">#<span class="sc-counter" id="show_amt">0</span></div>
+                                </div>
+                                <div class="col-md-6">
+                                    <strong> <small>Expected Returns: </small></strong>
+                                  <div class="text-primary s-24 my-3">#<span class="sc-counter" id="show_rt">0</span></div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-12">
+                                     <button class="btn btn-success" id="sub" type="submit">Proceed</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 {% endblock %}
 {% block script %}
-    <script></script>
+    <script>
+        const form_amt = document.getElementById('form_amt')
+        const show_amt = document.getElementById('show_amt')
+        const plan = document.getElementById('plan')
+        const show_plan = document.getElementById('show_plan')
+        const sub = document.getElementById('sub')
+
+        form_amt.onkeyup =()=>{
+           if (Number(form_amt.value) !== 0 && !isNaN(Number(form_amt.value))){
+                 show_amt.innerText = Number(form_amt.value)
+            }else{
+                show_amt.innerText = 0
+            }
+            $.ajax({
+                url: "{% url 'deposit' %}",
+                data: {"plan": plan.value, "amount": form_amt.value},
+                json: true,
+                success:(data)=>{
+                    if (data.status === 'wrong')
+                        document.getElementById('amt_warn').className ='text-danger'
+                        document.getElementById('amt_warn').innerText = data.message
+                    if (data.status === 'correct')
+                        document.getElementById('amt_warn').className ='d-none'
+                         document.getElementById('show_rt').innerText = Number(data.returns)
+
+                }
+            })
+        }
+        plan.onchange = ()=>{
+            show_plan.innerText = plan.value
+        }
+
+        sub.onclick =()=>{
+             $.ajax({
+                url: "{% url 'deposit' %}",
+                data: {"plan": plan.value, "amount": form_amt.value},
+                json: true,
+                success:(data)=>{
+                    if (data.status === 'wrong') {
+                        document.getElementById('amt_warn').className = 'text-danger'
+                        document.getElementById('amt_warn').innerText = data.message
+                    }
+                    if (data.status === 'correct' && show_plan.innerText !== '') {
+                        document.getElementById('amt_warn').className = 'd-none'
+                        document.getElementById('show_rt').innerText = Number(data.returns)
+                        document.getElementById('i_form').submit()
+                    }
+
+                }
+            })
+        }
+
+    </script>
 {% endblock %}

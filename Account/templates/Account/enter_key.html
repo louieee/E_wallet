@@ -1,10 +1,40 @@
 {% extends 'index.html' %}
+{% load static%}
 {% block title %}
-    {{ title }}
+    Signup
 {% endblock %}
 {% block content %}
-    <section></section>
+    <main>
+    <div id="primary" class="height-full">
+        <div class="container"  style="margin-bottom: 50px">
+            <div class="row mt-5">
+                <div class="col-lg-6 mx-md-auto">
+                    <div class="text-center">
+                        <br/>
+                        <i style="font-size: 100px; color: #12ce04" class="icon icon-key"></i>
+                        <br/><br/>
+                        <h3 class="mt-2 bolder"><span class="text-dark">UNN<span class="text-success">E-Wallet</span></span> Verifier</h3>
+                        <h6 class="text-center green-text bolder">Type in the 6-Digits that were sent to your Email Address</h6>
+
+                    </div>
+                    <br/>
+                    <form action="{% url 'signup' %}" method="post">
+                        {% csrf_token %}
+                        <div class="form-group has-icon text-success"><i class="icon-key2"></i>
+                            <input type="text" name="username" style="letter-spacing: 20px; font-size: large" class="form-control
+                            form-control-lg text-center bolder"
+                                   placeholder="******">
+                        </div>
+                         <br/>
+                        <input type="submit" class="btn btn-success btn-lg btn-block text-dark" value="Submit">
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- #primary -->
+</main>
 {% endblock %}
 {% block script %}
-    <script></script>
+
 {% endblock %}

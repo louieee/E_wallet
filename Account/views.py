@@ -35,7 +35,7 @@ def update_image(request):
 
 
 def edit_profile(request):
-    return redirect('dashboard')
+    return render(request, 'Account/edit_profile.html')
 
 
 def logout(request):
@@ -44,9 +44,20 @@ def logout(request):
 
 
 def forgot_password(request):
-    return redirect('verify')
+    if request.method == 'GET':
+        return render(request, 'Account/forgot_password.html')
+    else:
+        return redirect('verify')
 
 
 def enter_key(request):
     context = {"title": "Enter Key"}
     return render(request, 'Account/enter_key.html', context=context)
+
+
+def update_email(request):
+    return redirect('edit_profile')
+
+
+def change_password(request):
+    return redirect('edit_profile')

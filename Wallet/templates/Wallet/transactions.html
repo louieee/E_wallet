@@ -10,7 +10,16 @@
                     <div class="col-md-12">
                         <div class="card r-0 shadow">
                             <div class="table-responsive p-3">
-                                <h5>{{ type }} Transaction History</h5>
+                                <h5>{% if type == 'in_transfer' %}
+                                        Incoming Transfer
+                                    {% elif type == 'out_transfer' %}
+                                    Outgoing Transfer
+                                    {% elif type == 'deposit' %}
+                                    Deposit
+                                    {% elif type == 'withdrawal' %}
+                                    Withdrawal
+                                    {% endif %}
+                                    Transaction History</h5>
                                 <br/>
 {#                                {% if transactions.count > 0 %}#}
                                 <form>

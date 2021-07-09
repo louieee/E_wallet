@@ -1,6 +1,6 @@
 {% extends 'index.html' %}
 {% block title %}
-    Transfer
+    Make A Transfer
 {% endblock %}
 {% block content %}
     <div class="container-fluid my-3">
@@ -9,30 +9,25 @@
                     <!-- Basic Validation -->
                     <div class="card mb-3 shadow no-b r-0">
                         <div class="card-header white">
-                            <h6>Invest</h6>
+                            <h5 class="bolder">Make Transfer</h5>
                         </div>
                         <div class="card-body">
                             <form id="i_form" class="needs-validation" novalidate method="post" action="{% url 'deposit' %}">
                                 {% csrf_token %}
-                                <div class="form-row">
+                                 <div class="form-row">
                                     <div class="col-md-12 mb-3">
-                                        <label for="validationCustom01">Investment Plan</label>
-                                            {% if not plan %}
-                                                 <select name="plan" id="plan" class="form-control">
-                                                <option selected>Select a Plan</option>
-                                                {% for plan in plans %}
-                                                <option >{{ plan }}</option>
-                                                {% endfor %}
-                                            {% else %}
-                                                 <select name="plan" id="plan" class="form-control" disabled>
-                                                 <option selected>{{ plan }}</option>
-                                            {% endif %}
-                                        </select>
+                                        <label for="validationCustom01">Select a Beneficiary</label>
+                                            <select class="form-control">
+                                                <option>Ohaegbu Louis</option>
+                                                <option>Chidubem Sopuru</option>
+                                                <option>Sochima Amarachi</option>
+                                            </select>
                                         <div class="valid-feedback">
                                             Looks good!
                                         </div>
                                     </div>
                                 </div>
+
                                  <div class="form-row">
                                     <div class="col-md-12 mb-3">
                                         <label for="validationCustom03">Amount</label>
@@ -42,6 +37,15 @@
                                         </small>
                                     </div>
                                  </div>
+                                <div class="form-row">
+                                    <div class="col-md-12 mb-3">
+                                        <label for="validationCustom01">Account Password</label>
+                                            <input class="form-control text-center" style="letter-spacing: 8px;" placeholder="********" type="password" minlength="8"/>
+                                        <div class="valid-feedback">
+                                            Looks good!
+                                        </div>
+                                    </div>
+                                </div>
 
                             </form>
 
@@ -73,21 +77,23 @@
                 <div class="card no-b shadow">
                     <div class="card-body">
                         <div class="my-4">
-                            <span class="badge badge-success badge-pill">Investment</span>
+                            <span class="badge badge-success badge-pill">Transfer Information</span>
 
                         </div>
                          <div class="my-3">
-                             <small>Investment Plan</small>
-                             <h3 id="show_plan">{% if plan %}{{ plan }}{% else %}************{% endif %}</h3>
+                             <small>Recipient's Name</small>
+                             <h4 id="show_plan">Sochima Amarachi</h4>
+                             <small>Recipient's Email</small>
+                             <h5 id="show_plan">amarachi.sochima.1975643@unn.edu.ng</h5>
                          </div>
                         <div class="my-3">
                             <div class="row">
                                 <div class="col-md-6">
-                                    <strong> <small>Invested Amount: </small></strong>
+                                    <strong> <small>Transferred Amount: </small></strong>
                                   <div class="text-primary s-24 my-3">#<span class="sc-counter" id="show_amt">0</span></div>
                                 </div>
                                 <div class="col-md-6">
-                                    <strong> <small>Expected Returns: </small></strong>
+                                    <strong> <small>Account Balance: </small></strong>
                                   <div class="text-primary s-24 my-3">#<span class="sc-counter" id="show_rt">0</span></div>
                                 </div>
                             </div>

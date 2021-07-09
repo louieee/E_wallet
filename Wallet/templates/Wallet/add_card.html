@@ -1,6 +1,6 @@
 {% extends 'index.html' %}
 {% block title %}
-    Pay Bills
+    Deposit
 {% endblock %}
 {% block content %}
     <div class="container-fluid my-3">
@@ -9,25 +9,15 @@
                     <!-- Basic Validation -->
                     <div class="card mb-3 shadow no-b r-0">
                         <div class="card-header white">
-                            <h6>Invest</h6>
+                            <h5 class="bolder">Add a new Card</h5>
                         </div>
                         <div class="card-body">
                             <form id="i_form" class="needs-validation" novalidate method="post" action="{% url 'deposit' %}">
                                 {% csrf_token %}
                                 <div class="form-row">
                                     <div class="col-md-12 mb-3">
-                                        <label for="validationCustom01">Investment Plan</label>
-                                            {% if not plan %}
-                                                 <select name="plan" id="plan" class="form-control">
-                                                <option selected>Select a Plan</option>
-                                                {% for plan in plans %}
-                                                <option >{{ plan }}</option>
-                                                {% endfor %}
-                                            {% else %}
-                                                 <select name="plan" id="plan" class="form-control" disabled>
-                                                 <option selected>{{ plan }}</option>
-                                            {% endif %}
-                                        </select>
+                                        <label for="validationCustom01">Card Number</label>
+                                            <input id="pin"  name="pin" type="text" class="form-control text-center" maxlength="12" minlength="12" style="letter-spacing: 3px;"  placeholder="Enter your 12 - Digit Pin" required>
                                         <div class="valid-feedback">
                                             Looks good!
                                         </div>
@@ -35,8 +25,17 @@
                                 </div>
                                  <div class="form-row">
                                     <div class="col-md-12 mb-3">
-                                        <label for="validationCustom03">Amount</label>
-                                        <input id="form_amt"  name="amount" type="text" class="form-control"  placeholder="Amount" required>
+                                        <label for="validationCustom03">CVV</label>
+                                        <input id="cvv"  name="amount" type="text" class="form-control text-center" maxlength="3" minlength="3" style="letter-spacing: 3px"  placeholder="Enter your CVV" required>
+                                        <small id="amt_warn" class="text-danger d-none">
+
+                                        </small>
+                                    </div>
+                                 </div>
+                                 <div class="form-row">
+                                    <div class="col-md-12 mb-3">
+                                        <label for="validationCustom03">Expiry Date</label>
+                                        <input id="exp_date"  name="amount" type="date" class="form-control text-center" required>
                                         <small id="amt_warn" class="text-danger d-none">
 
                                         </small>
@@ -73,22 +72,22 @@
                 <div class="card no-b shadow">
                     <div class="card-body">
                         <div class="my-4">
-                            <span class="badge badge-success badge-pill">Investment</span>
+                            <span class="badge badge-success badge-pill">New Card</span>
 
                         </div>
                          <div class="my-3">
-                             <small>Investment Plan</small>
-                             <h3 id="show_plan">{% if plan %}{{ plan }}{% else %}************{% endif %}</h3>
+                             <small>12-Digit Card Number</small>
+                             <h3 id="show_plan">3456********4567</h3>
                          </div>
                         <div class="my-3">
                             <div class="row">
                                 <div class="col-md-6">
-                                    <strong> <small>Invested Amount: </small></strong>
-                                  <div class="text-primary s-24 my-3">#<span class="sc-counter" id="show_amt">0</span></div>
+                                    <strong> <p class="font-weight-bold">CVV</p></strong>
+                                  <div class="text-primary my-3">456</div>
                                 </div>
                                 <div class="col-md-6">
-                                    <strong> <small>Expected Returns: </small></strong>
-                                  <div class="text-primary s-24 my-3">#<span class="sc-counter" id="show_rt">0</span></div>
+                                    <strong> <p class="font-weight-bold">Expiry date</p></strong>
+                                  <div class="text-primary  my-3">12th of December 2012 (<span class="text-danger">Expired</span>)</div>
                                 </div>
                             </div>
                             <div class="row">

@@ -12,16 +12,17 @@ def transfer(request):
     return render(request, 'Wallet/transfer.html')
 
 
-def pay_bills(request):
-    return render(request, 'Wallet/pay_bills.html')
-
-
 def withdraw(request):
     return render(request, 'Wallet/withdraw.html')
 
 
 def transactions(request):
-    return render(request, 'Wallet/transactions.html')
+    type_ = request.GET['type']
+    bank = False
+    if type_ == 'withdrawal' or type_ == 'deposit':
+        bank = True
+
+    return render(request, 'Wallet/transactions.html', context={"type": type_, 'bank': bank})
 
 
 def beneficiaries(request):
@@ -31,3 +32,10 @@ def beneficiaries(request):
 def cards(request):
     return render(request, 'Wallet/cards.html')
 
+
+def add_beneficiary(request):
+    return render(request, 'Wallet/add_beneficiary.html')
+
+
+def add_card(request):
+    return render(request, 'Wallet/add_card.html')

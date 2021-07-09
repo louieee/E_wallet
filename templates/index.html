@@ -119,7 +119,7 @@
                     <div class="float-left info">
                         <h6 class="font-weight-light mt-2 mb-1">{{ investor.first_name }} {{ investor.last_name }}</h6>
                         <h6 class="font-weight-bold mt-2 mb-1 ">{{ investor.username }}</h6>
-                        <a href="{% url 'edit_profile' %}" class="btn btn-xs btn-success mx-0">Edit Profile</a>
+                        <a href="{% url 'edit_profile' %}" class="btn btn-xs btn-success mx-0">Change Password</a>
                     </div>
                 </div>
             </div>
@@ -147,35 +147,13 @@
             </li>
             <li class="treeview no-b"><a href="{% url 'beneficiaries' %}">
                 <i class="icon icon-package light-green-text s-18"></i>
-                <span>List of Beneficiaries</span>
+                <span>My Beneficiaries</span>
             </a>
             </li>
-             <li class="treeview"><a href="#">
-                <i class="icon icon-sailing-boat-water purple-text s-18"></i> <span>Pay Bills</span> <i
-                    class="icon icon-angle-left s-18 pull-right"></i></a>
-                <ul class="treeview-menu">
-                    <li class="treeview no-b"><a href="{% url 'pay_bills'%}?type=deposit">
-                        <i class="icon icon-package light-green-text s-18"></i>
-                        <span>Pay School Fees</span>
-                        <span class="badge r-3 badge-success pull-right">{{ deposit_count }}</span>
-                    </a>
-
-                    </li>
-                    <li class="treeview no-b"><a href="{% url 'pay_bills'%}?type=withdraw">
-                        <i class="icon icon-package light-green-text s-18"></i>
-                        <span>Airtime</span>
-                        <span class="badge r-3 badge-success pull-right">{{ withdraw_count }}</span>
-                    </a>
-
-                    </li>
-                    <li class="treeview no-b"><a href="{% url 'pay_bills'%}?type=transfer">
-                        <i class="icon icon-package light-green-text s-18"></i>
-                        <span>SUB Foods</span>
-                        <span class="badge r-3 badge-success pull-right">{{ commission_count }}</span>
-                    </a>
-
-                    </li>
-                </ul>
+            <li class="treeview no-b"><a href="{% url 'cards' %}">
+                <i class="icon icon-package light-green-text s-18"></i>
+                <span>My Cards</span>
+            </a>
             </li>
             <li class="treeview"><a href="#">
                 <i class="icon icon-sailing-boat-water purple-text s-18"></i> <span>Transactions</span> <i
@@ -188,16 +166,23 @@
                     </a>
 
                     </li>
-                    <li class="treeview no-b"><a href="{% url 'transactions'%}?type=withdraw">
+                    <li class="treeview no-b"><a href="{% url 'transactions'%}?type=withdrawal">
                         <i class="icon icon-package light-green-text s-18"></i>
                         <span>Withdrawals</span>
                         <span class="badge r-3 badge-success pull-right">{{ withdraw_count }}</span>
                     </a>
 
                     </li>
-                    <li class="treeview no-b"><a href="{% url 'transactions'%}?type=transfer">
+                    <li class="treeview no-b"><a href="{% url 'transactions'%}?type=in_transfer">
                         <i class="icon icon-package light-green-text s-18"></i>
-                        <span>Transfers</span>
+                        <span>Incoming Transfers</span>
+                        <span class="badge r-3 badge-success pull-right">{{ commission_count }}</span>
+                    </a>
+
+                    </li>
+                    <li class="treeview no-b"><a href="{% url 'transactions'%}?type=out_transfer">
+                        <i class="icon icon-package light-green-text s-18"></i>
+                        <span>Outgoing Transfers</span>
                         <span class="badge r-3 badge-success pull-right">{{ commission_count }}</span>
                     </a>
 
@@ -234,7 +219,7 @@
                     {% if request.user.is_authenticated  %}
                     <h4>
                         <i class="icon-smiling-face"></i>
-                        Welcome User
+                        Welcome Julius Agwu
                     </h4>
                         {% else %}
                             <a href="{% url 'home' %}">

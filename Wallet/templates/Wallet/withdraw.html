@@ -1,6 +1,6 @@
 {% extends 'index.html' %}
 {% block title %}
-    Withdraw
+    Make Withdrawal
 {% endblock %}
 {% block content %}
     <div class="container-fluid my-3">
@@ -9,30 +9,33 @@
                     <!-- Basic Validation -->
                     <div class="card mb-3 shadow no-b r-0">
                         <div class="card-header white">
-                            <h6>Invest</h6>
+                            <h5 class="bolder">Make Withdrawal</h5>
                         </div>
                         <div class="card-body">
                             <form id="i_form" class="needs-validation" novalidate method="post" action="{% url 'deposit' %}">
                                 {% csrf_token %}
-                                <div class="form-row">
+                                 <div class="form-row">
                                     <div class="col-md-12 mb-3">
-                                        <label for="validationCustom01">Investment Plan</label>
-                                            {% if not plan %}
-                                                 <select name="plan" id="plan" class="form-control">
-                                                <option selected>Select a Plan</option>
-                                                {% for plan in plans %}
-                                                <option >{{ plan }}</option>
-                                                {% endfor %}
-                                            {% else %}
-                                                 <select name="plan" id="plan" class="form-control" disabled>
-                                                 <option selected>{{ plan }}</option>
-                                            {% endif %}
-                                        </select>
+                                        <label for="validationCustom01">Select your Bank</label>
+                                            <select class="form-control">
+                                                <option>First Bank</option>
+                                                <option>Skye Bank</option>
+                                            </select>
                                         <div class="valid-feedback">
                                             Looks good!
                                         </div>
                                     </div>
                                 </div>
+                                <div class="form-row">
+                                    <div class="col-md-12 mb-3">
+                                        <label for="validationCustom03">Account Number</label>
+                                        <input id="form_amt"  name="amount" type="text" class="form-control"  placeholder="Enter your Account Number" required>
+                                        <small id="amt_warn" class="text-danger d-none">
+
+                                        </small>
+                                    </div>
+                                 </div>
+
                                  <div class="form-row">
                                     <div class="col-md-12 mb-3">
                                         <label for="validationCustom03">Amount</label>
@@ -42,6 +45,15 @@
                                         </small>
                                     </div>
                                  </div>
+                                <div class="form-row">
+                                    <div class="col-md-12 mb-3">
+                                        <label for="validationCustom01">Bank OTP</label>
+                                            <input class="form-control text-center" style="letter-spacing: 8px;" placeholder="******" type="password" minlength="6" maxlength="4"/>
+                                        <div class="valid-feedback">
+                                            Looks good!
+                                        </div>
+                                    </div>
+                                </div>
 
                             </form>
 
@@ -73,21 +85,23 @@
                 <div class="card no-b shadow">
                     <div class="card-body">
                         <div class="my-4">
-                            <span class="badge badge-success badge-pill">Investment</span>
+                            <span class="badge badge-success badge-pill">Withdrawal Information</span>
 
                         </div>
                          <div class="my-3">
-                             <small>Investment Plan</small>
-                             <h3 id="show_plan">{% if plan %}{{ plan }}{% else %}************{% endif %}</h3>
+                             <small>Bank Name</small>
+                             <h3 id="show_plan">First Bank</h3>
+                             <small>Account Number</small>
+                             <h3 id="show_plan">309764317736</h3>
                          </div>
                         <div class="my-3">
                             <div class="row">
                                 <div class="col-md-6">
-                                    <strong> <small>Invested Amount: </small></strong>
+                                    <strong> <small>Withdrawn Amount: </small></strong>
                                   <div class="text-primary s-24 my-3">#<span class="sc-counter" id="show_amt">0</span></div>
                                 </div>
                                 <div class="col-md-6">
-                                    <strong> <small>Expected Returns: </small></strong>
+                                    <strong> <small>Account Balance: </small></strong>
                                   <div class="text-primary s-24 my-3">#<span class="sc-counter" id="show_rt">0</span></div>
                                 </div>
                             </div>

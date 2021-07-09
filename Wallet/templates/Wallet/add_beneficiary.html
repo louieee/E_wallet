@@ -1,0 +1,36 @@
+{% extends 'index.html' %}
+{% load static%}
+{% block title %}
+    Add New Beneficiary
+{% endblock %}
+{% block content %}
+    <main>
+    <div id="primary" class="height-full">
+        <div class="container"  style="margin-bottom: 50px">
+            <div class="row">
+                <div class="col-lg-4 mx-md-auto">
+                    <div class="text-center">
+                        <br/>
+                        <i style="font-size: 100px; color: #12ce04" class="icon icon-people"></i>
+                        <h3 class="mt-2 bolder"><span class="text-dark">ADD A NEW <span class="text-success">BENEFICIARY</span></span></h3>
+
+                    </div>
+                    <form action="{% url 'add_beneficiary' %}" method="post">
+                        {% csrf_token %}
+                        <div class="form-group has-icon"><i class="icon-envelope-o"></i>
+                            <input type="email" name="email" class="form-control form-control-lg"
+                                   placeholder="Email Address">
+                        </div>
+
+                        <input type="submit" class="btn btn-success btn-lg btn-block text-dark" value="Add">
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- #primary -->
+</main>
+{% endblock %}
+{% block script %}
+
+{% endblock %}

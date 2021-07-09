@@ -15,13 +15,15 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
-from .views import deposit, withdraw, transactions, pay_bills, cards, beneficiaries, transfer
+from .views import deposit, withdraw, transactions, cards, \
+    beneficiaries, transfer, add_beneficiary, add_card
 urlpatterns = [
     path('deposit/', deposit, name="deposit"),
     path('withdraw/', withdraw, name="withdraw"),
     path('transfer/', transfer, name="transfer"),
     path('transactions/', transactions, name="transactions"),
-    path('paybills/', pay_bills, name="pay_bills"),
     path('cards/', cards, name="cards"),
-    path('beneficiaries/', beneficiaries, name="beneficiaries")
+    path('add_card/', add_card, name="add_card"),
+    path('beneficiaries/', beneficiaries, name="beneficiaries"),
+    path('add_beneficiary/', add_beneficiary, name="add_beneficiary")
 ]

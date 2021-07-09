@@ -6,49 +6,6 @@
     <div class="container-fluid my-3">
         <div class="d-flex row">
             <div class="col-md-12">
-                    <div class="card my-3 shadow no-b r-0">
-                        <div class="card-header white">
-                            <h6>Edit Profile</h6>
-                        </div>
-                        <div class="card-body">
-                            <form action="{% url 'edit_profile' %}" method="post">
-                                {% csrf_token %}
-                                <div class="form-row">
-                                    <div class="col-md-4 mb-3">
-                                        <label for="validationServer01">First name</label>
-                                        <input type="text" name="first_name" class="form-control" id="validationServer01" value="{{ request.user.first_name }}" >
-                                        <div class="valid-feedback">
-                                            Looks good!
-                                        </div>
-                                    </div>
-                                    <div class="col-md-4 mb-3">
-                                        <label for="validationServer02">Last name</label>
-                                        <input type="text" name="last_name" class="form-control" id="validationServer02"  value="{{ request.user.last_name }}" >
-                                        <div class="valid-feedback">
-                                            Looks good!
-                                        </div>
-                                    </div>
-                                    <div class="col-md-4 mb-3">
-                                        <label for="validationServerUsername">Username</label>
-                                        <div class="input-group">
-                                            <div class="input-group-prepend">
-                                                <span class="input-group-text" id="inputGroupPrepend3">@</span>
-                                            </div>
-                                            <input type="text" name="username" value="{{ request.user.username }}" class="form-control" id="validationServerUsername"  aria-describedby="inputGroupPrepend3" >
-                                            <div class="invalid-feedback">
-                                                Please choose a username.
-                                            </div>
-                                            <div class="valid-feedback">
-                                            Looks good!
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <button class="btn btn-success" type="submit">Submit</button>
-                            </form>
-                        </div>
-                    </div>
-                <form></form>
                 <div class="card my-3 shadow no-b r-0">
                         <div class="card-header white">
                             <h6>Change Password</h6>

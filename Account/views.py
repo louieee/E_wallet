@@ -1,5 +1,7 @@
 from django.contrib import auth
 from django.contrib.auth.decorators import login_required
+
+from Account import custom_auth
 from Account.models import User
 from django.shortcuts import render, redirect
 
@@ -183,14 +185,16 @@ def change_password(request):
 		new_pass2 = request.POST.get('new_password2')
 		if not user.check_password(old_password):
 			flash(request, 'Your password is incorrect!', 'danger')
-			lock(request.user.username, request)
+			lock(request.user.email, request)
+			flash(request, 'You have put in an incorrect password', 'danger')
+			return redirect('login')
 		if new_pass1 != new_pass2:
 			flash(request, 'The two passwords are not the same!', 'danger')
 			return redirect('edit_profile')
 		user.set_password(new_pass1)
 		user.save()
 		flash(request, 'You have successfully changed your password.', 'success')
-		return redirect('edit_profile')
+		return redirect('login')
 
 
 def reset_password(request):

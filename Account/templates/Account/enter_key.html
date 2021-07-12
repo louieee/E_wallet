@@ -1,7 +1,7 @@
 {% extends 'index.html' %}
 {% load static%}
 {% block title %}
-    Signup
+    Verify
 {% endblock %}
 {% block content %}
     <main>
@@ -18,10 +18,10 @@
 
                     </div>
                     <br/>
-                    <form action="{% url 'signup' %}" method="post">
+                    <form action="{% url 'verify' %}" method="post">
                         {% csrf_token %}
                         <div class="form-group has-icon text-success"><i class="icon-key2"></i>
-                            <input type="text" name="username" style="letter-spacing: 20px; font-size: large" class="form-control
+                            <input type="text" name="token" style="letter-spacing: 20px; font-size: large" class="form-control
                             form-control-lg text-center bolder"
                                    placeholder="******">
                         </div>

@@ -9,6 +9,9 @@ class Wallet(models.Model):
     user = models.OneToOneField('Account.User', on_delete=models.CASCADE)
     beneficiaries = models.ManyToManyField('Wallet.Wallet', blank=True)
 
+    def transactions(self):
+        return Transaction.objects.filter(sender=self.user, receiver=self.user)
+
     def deposit_transactions(self):
         # this returns all the user's deposit transactions
         return Transaction.objects.filter(type=Transaction.Choice.deposit, sender=self.user)

@@ -105,15 +105,15 @@
                 <div>
                     <div class="float-left image">
                         <img id="user_img" class="user_avatar"
-                             {% if not investor.profile_picture %}
+                             {% if not request.user.profile_picture %}
                                 src="{% static 'dashboard/assets/img/dummy/u1.png'%}"
                              {% else %}
-                                src="{{ investor.profile_picture.url }}"
+                                src="{{ request.user.profile_picture.url }}"
                              {% endif %}
                              alt="User Image">
                     <form id="img_form" method="post" action="{% url 'update_image' %}" enctype="multipart/form-data">
                     {% csrf_token %}
-                        <input id="upload_img"  name="user_img" accept="image/jpeg" type="file" class="d-none">
+                        <input id="upload_img"  name="user_img" accept="image/*" type="file" class="d-none">
             </form>
                     </div>
                     <div class="float-left info">
@@ -219,7 +219,7 @@
                     {% if request.user.is_authenticated  %}
                     <h4>
                         <i class="icon-smiling-face"></i>
-                        Welcome Julius Agwu
+                        Welcome {{ request.user.first_name| title }} {{ request.user.last_name|title }}
                     </h4>
                         {% else %}
                             <a href="{% url 'home' %}">

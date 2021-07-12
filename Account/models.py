@@ -1,3 +1,7 @@
+import json
+from datetime import timedelta
+
+from decouple import config
 from django.contrib.auth.models import AbstractUser
 from django.db import models
 
@@ -8,7 +12,11 @@ from django.utils import timezone
 
 class User(AbstractUser):
 	# this is the abstract user class which extends the normal user class and its attributes.
+	is_active = models.BooleanField(default=False)
 	profile_picture = models.ImageField(upload_to='profile_pic')
+	lock_time = models.DateTimeField(null=True)
+	trial = models.SmallIntegerField(default=0)
+	multiplier = models.SmallIntegerField(default=0)
 
 	def __str__(self):
 		# this returns the name of the class
@@ -71,3 +79,63 @@ class Card(models.Model):
 	def expired(self):
 		# this function checks if a credit card is expired or not
 		return self.expiry_date < timezone.now()
+
+
+class Cache(models.Model):
+	key = models.CharField(max_length=50, default='')
+	data = models.TextField(default='{}')
+	date_created = models.DateTimeField(auto_now_add=True)
+	expiry_date = models.DateTimeField()
+
+	@staticmethod
+	def set(key, data=None):
+		try:
+			cache = Cache.objects.get(key=key)
+			if data is not None:
+				cache.data = data
+				cache.save()
+		except Cache.DoesNotExist:
+			if data is not None:
+				Cache.objects.create(key=key, data=data)
+			else:
+				Cache.objects.create(key=key)
+
+	@staticmethod
+	def get(key, object_=False):
+		try:
+			cache = Cache.objects.get(key=key)
+			if cache.expired():
+				cache.delete()
+				return None
+			if object_:
+				return cache
+			return json.loads(cache.data)
+		except Cache.DoesNotExist:
+			cache = Cache.objects.filter(key__istartswith=key).last()
+			if cache is not None:
+				if cache.expired():
+					cache.delete()
+					return None
+				if object_:
+					return cache
+				return json.loads(cache.data)
+			else:
+				return None
+
+	@staticmethod
+	def delete_(key):
+		try:
+			cache = Cache.get(key=key, object_=True)
+			if cache is not None:
+				cache.delete()
+			return
+		except Cache.DoesNotExist:
+			return
+
+	def save(self, *args, **kwargs):
+		if self.date_created is None:
+			self.expiry_date = timezone.now() + timedelta(minutes=int(config('CACHE_EXPIRY')))
+		super(Cache, self).save(*args, **kwargs)
+
+	def expired(self):
+		return self.expiry_date <= timezone.now()

@@ -12,7 +12,7 @@
                             <div class="table-responsive p-3">
                                 <h5>My Cards</h5>
                                 <br/>
-{#                                {% if transactions.count > 0 %}#}
+                                {% if cards.count > 0 %}
                                 <form>
                                     <table class="table table-striped table-hover r-0">
                                         <thead>
@@ -25,23 +25,29 @@
                                         </thead>
 
                                         <tbody>
-{#                                    {% for transaction in transactions %}#}
+                                    {% for card in cards %}
                                         <tr>
-                                            <td>4568</td>
-                                            <td>455</td>
-                                            <td class="text-danger">expired</td>
+                                            <td>{{ card.first_digits }}</td>
+                                            <td>{{ card.last_digits }}</td>
+                                            <td class="
+                                            {% if card.expired == 'Expired' %}
+                                            text-danger
+                                            {% else %}
+                                            text-success
+                                            {% endif %}
+">{{ card.expired }}</td>
                                             <td><a href="#" class="btn btn-danger btn-sm">Remove</a></td>
                                         </tr>
-{#                                        {% endfor %}#}
+                                        {% endfor %}
 
                                         </tbody>
                                     </table>
                                 </form>
-{#                                {% else %}#}
-{#                                    #}
-{#                                    <h6>You have not added any card yet.</h6>#}
-{#                            #}
-{#                                {% endif %}#}
+                                {% else %}
+
+                                    <h6>You have not added any card yet.</h6>
+
+                                {% endif %}
                             </div>
                         </div>
                     </div>

@@ -27,7 +27,7 @@ def send_mail(user, title, message, to, code=None, attachments=None, data=None):
 		if data is not None:
 			context['data'] = data
 
-		html_message = render_to_string('Account/Others/mailer.html', context=context)
+		html_message = render_to_string('Account/mailer.html', context=context)
 		plain_message = strip_tags(html_message)
 		# The email body for recipients with non-HTML email clients.
 		body_text = plain_message
@@ -107,14 +107,14 @@ def lock(email, request=None):
 	trial = user.trial
 	if request:
 		auth.logout(request)
-	if trial < 3:
+	if trial < 2:
 		user.trial = trial + 1
 		user.save()
 		return
-	elif trial == 3:
+	elif trial == 2:
 		user.multiplier = multiplier + 1
-		user.trial = 0
-		user.lock_time = datetime.now() + timedelta(minutes=multiplier)
+		user.trial = 1
+		user.lock_time = datetime.now() + timedelta(minutes=(multiplier+1))
 		user.save()
 		return
 
@@ -124,21 +124,24 @@ def open_lock(email, final=None):
 	user = User.objects.get(email=email)
 	if user.lock_time is None:
 		return
-	if timezone.now() > user.lock_time:
-		user.trial = 0
-		user.save()
+	user.trial = 0
+	user.lock_time = None
 	if final:
 		user.multiplier = 0
-		user.save()
+	user.save()
 	return
 
 
 def check_lock(user):
 	if user.lock_time is None:
 		return None
-	seconds = (user.lock_time - datetime.now()).seconds
+	print(user.lock_time.strftime("%b %d %Y %H:%M:%S"))
+	print(datetime.now().strftime("%b %d %Y %H:%M:%S"))
+	seconds = int((user.lock_time - datetime.now()).total_seconds())
 	print(seconds)
-	if seconds < 60:
+	if seconds <= 0:
+		return None
+	if 0 < seconds < 60:
 		return f'{seconds} seconds'
 	elif 60 <= seconds < 3600:
 		return f'{seconds} minute(s), {seconds % 60} second(s)'

@@ -2,6 +2,7 @@ from django.db import models
 
 
 # Create your models here.
+from django.db.models import Q
 
 
 class Wallet(models.Model):
@@ -9,12 +10,15 @@ class Wallet(models.Model):
     user = models.OneToOneField('Account.User', on_delete=models.CASCADE)
     beneficiaries = models.ManyToManyField('Wallet.Wallet', blank=True)
 
+    def owner(self):
+        return self.user.__str__()
+
     def transactions(self):
-        return Transaction.objects.filter(sender=self.user, receiver=self.user)
+        return Transaction.objects.filter(Q(sender=self) | Q(receiver=self))
 
     def deposit_transactions(self):
         # this returns all the user's deposit transactions
-        return Transaction.objects.filter(type=Transaction.Choice.deposit, sender=self.user)
+        return Transaction.objects.filter(type=Transaction.Choice.deposit, sender=self)
 
     def pending_deposits(self):
         # this returns all the user's deposit transactions that are still pending
@@ -30,7 +34,7 @@ class Wallet(models.Model):
 
     def withdrawal_transactions(self):
         # this returns all the user's withdrawal transactions
-        return Transaction.objects.filter(type=Transaction.Choice.withdrawal, sender=self.user)
+        return Transaction.objects.filter(type=Transaction.Choice.withdrawal, sender=self)
 
     def pending_withdrawals(self):
         # this returns all the user's withdrawal transactions that are still pending
@@ -46,7 +50,7 @@ class Wallet(models.Model):
 
     def transfer_transactions(self):
         # this returns all the user's transfer transactions
-        return Transaction.objects.filter(type=Transaction.Choice.transfer, sender=self.user)
+        return Transaction.objects.filter(type=Transaction.Choice.transfer, sender=self)
 
     def pending_transfers(self):
         # this returns all the user's transfer transactions that are still pending
@@ -62,7 +66,7 @@ class Wallet(models.Model):
 
     def received_transfers(self):
         # this returns all the user's received transfer transactions
-        return Transaction.objects.filter(type=Transaction.Choice.transfer, receiver=self.user,
+        return Transaction.objects.filter(type=Transaction.Choice.transfer, receiver=self,
                                           status=Transaction.Choice.success)
 
     def total_deposits(self):

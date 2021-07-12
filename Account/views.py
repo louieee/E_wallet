@@ -32,7 +32,7 @@ def login(request):
 			return redirect('verify')
 		login_time = check_lock(user)
 		if login_time is not None:
-			flash(request, f'You have been temporarily blocked! Login in {login_time}', 'danger')
+			flash(request, f'You have been temporarily blocked! You will be able to login in {login_time}', 'danger')
 			return redirect('login')
 		user = auth.authenticate(request, username=email, password=password)
 		if user:

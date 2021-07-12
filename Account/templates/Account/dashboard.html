@@ -15,7 +15,7 @@
                                     <span class="icon icon-wallet text-success s-48"></span>
                                 </div>
                                 <div class="counter-title font-weight-bold" style="letter-spacing: 2px;">Account Balance</div>
-                                <h4 class="mt-3 bolder"><span class="bolder">&#8358</span><span class="sc-counter ">{{ wallet.balance }}</span></h4>
+                                <h4 class="mt-3 bolder"><span class="bolder">&#8358</span><span class="sc-counter ">{{ wallet.account_balance }}</span></h4>
                             </div>
                         </div>
                     </div>
@@ -28,7 +28,7 @@
                                     <span class="icon icon-safebox text-success s-48"></span>
                                 </div>
                                 <div class="counter-title font-weight-bold text-dark">Deposits</div>
-                                <h5 class="mt-3 bolder"><span class="bolder">&#8358</span><span class="sc-counter ">{{ wallet.balance }}</span></h5>
+                                <h5 class="mt-3 bolder"><span class="bolder">&#8358</span><span class="sc-counter ">{{ wallet.total_deposits }}</span></h5>
                             </div>
                         </div>
                     </div>
@@ -39,7 +39,7 @@
                                     <span class="icon icon-money-bag text-success s-48"></span>
                                 </div>
                                 <div class="counter-title font-weight-bold text-dark">Withdrawals</div>
-                                <h5 class="mt-3 bolder"><span class="bolder">&#8358</span><span class="sc-counter ">{{ wallet.balance }}</span></h5>
+                                <h5 class="mt-3 bolder"><span class="bolder">&#8358</span><span class="sc-counter ">{{ wallet.total_withdrawals }}</span></h5>
                             </div>
                         </div>
                     </div>
@@ -50,7 +50,7 @@
                                     <span class="icon icon-money-1 text-success s-48"></span>
                                 </div>
                                 <div class="counter-title font-weight-bold text-dark">Incoming Transfers</div>
-                                <h5 class="mt-3 bolder"><span class="bolder">&#8358</span><span class="sc-counter ">{{ wallet.balance }}</span></h5>
+                                <h5 class="mt-3 bolder"><span class="bolder">&#8358</span><span class="sc-counter ">{{ wallet.total_received_transfers }}</span></h5>
                             </div>
                         </div>
                     </div>
@@ -61,7 +61,7 @@
                                     <span class="icon icon-money-3 text-success s-48"></span>
                                 </div>
                                 <div class="counter-title font-weight-bold text-dark">Outgoing Transfers</div>
-                                <h5 class="mt-3 bolder"><span class="bolder">&#8358</span><span class="sc-counter ">{{ wallet.balance }}</span></h5>
+                                <h5 class="mt-3 bolder"><span class="bolder">&#8358</span><span class="sc-counter ">{{ wallet.total_sent_transfers }}</span></h5>
                             </div>
                         </div>
                     </div>
@@ -76,7 +76,7 @@
                             <div class="table-responsive p-3">
                                 <h5 class="font-weight-bold">Transaction History</h5>
                                 <br/>
-                                {% if transactions.count > 0 %}
+                                {% if wallet.transactions.count > 0 %}
                                 <form>
                                     <table class="table table-striped table-hover r-0">
                                         <thead>
@@ -90,29 +90,37 @@
                                         </thead>
 
                                         <tbody>
-                                        {% for transaction in transactions %}
+                                        {% for transaction in wallet.transactions %}
                                         <tr>
                                             <td>
                                                 <div class="avatar avatar-md mr-3 mt-1 float-left">
                                                     <span class="avatar-letter
                                                     {% if transaction.type == 0 %}avatar-letter-d
                                                     {% elif transaction.type == 1 %}avatar-letter-w
-                                                    {% elif transaction.type == 3 %}avatar-letter-r
-                                                    {% elif transaction.type == 2 %}avatar-letter-i{% endif %}  avatar-md circle"></span>
+                                                    {% elif transaction.type == 2 %}avatar-letter-t
+                                                    {% endif %}  avatar-md circle"></span>
                                                 </div>
                                                     <div>
-                                                        <strong class="pt-5">{{ transaction.type_ }}</strong>
+                                                        <strong class="pt-5">{{ transaction.get_type_display }}</strong>
                                                     </div>
                                             </td>
 
-                                            <td><span class="bolder">&#8358</span><span class="sc-counter">{{ transaction.amount_in_dollars }}</span></td>
+                                            <td><span class="bolder">&#8358</span><span class="sc-counter">{{ transaction.amount }}</span></td>
                                             <td>{{ transaction.date_created.date }}</td>
 
                                             <td>{{  transaction.date_created.time }}</td>
                                             {% if transaction.confirmed %}
                                                 <td><span class="r-3 badge badge-success ">Confirmed</span></td>
                                             {% else %}
-                                                <td><span class="r-3 badge badge-warning ">Pending</span></td>
+                                                <td><span class="r-3 badge
+                                                {% if transaction.status == 0 %}
+                                                    badge-warning
+                                                {% elif transaction.status == 1 %}
+                                                    badge-success
+                                                {% else %}
+                                                badge-danger
+                                                {% endif %}
+">{{ transaction.get_status_display }}</span></td>
                                             {% endif %}
                                         </tr>
                                         {% endfor %}

@@ -21,7 +21,7 @@
                                     {% endif %}
                                     Transaction History</h5>
                                 <br/>
-{#                                {% if transactions.count > 0 %}#}
+                                {% if transactions.count > 0 %}
                                 <form>
                                     <table class="table table-striped table-hover r-0">
                                         <thead>
@@ -39,12 +39,13 @@
                                             {% if type == 'out_transfer' %}
                                             <th>RECEIVER</th>
                                             {% endif %}
-                                            {% if bank %}
+                                            {% if type == 'deposit' %}
                                             <th>BANK</th>
                                             <th>ACCOUNT NUMBER</th>
-                                            {% endif %}
-                                            {% if card %}
                                             <th>CARD</th>
+                                            {% elif type == 'withdrawal' %}
+                                                <th>BANK</th>
+                                                <th>ACCOUNT NUMBER</th>
                                             {% endif %}
                                             <th>TIME</th>
                                             <th>STATUS</th>
@@ -54,39 +55,56 @@
                                         </thead>
 
                                         <tbody>
+                                        {% for transaction in transactions %}
                                            <tr class="">
-                                            <td><span class="bolder">N</span>3000</td>
-                                            {% if type == 'deposit' %}
-                                            <td>Card</td>
-                                            {% endif %}
-                                            {% if type == 'withdrawal' %}
-                                            <td>Bank</td>
-                                            {% endif %}
+                                            <td><span class="bolder">N</span>{{ transaction.amount }}</td>
+                                           {% if type == 'withdrawal' or type == 'deposit'  %}
+                                            <td>{{ transaction.source.get_channel_display }}</td>
+                                           {% endif %}
                                             {% if type == 'in_transfer' %}
-                                            <td>Oluebube Sarah</td>
+                                            <td>{{ transaction.sender.owner}}</td>
                                                 {% endif %}
                                            {% if type == 'out_transfer' %}
-                                            <td>Tolani Eze</td>
+                                            <td>{{ transaction.receiver.owner }}</td>
                                            {% endif %}
-                                            {% if bank %}
-                                            <td>First Bank</td>
-                                            <td>30997867543</td>
+                                            {% if type == 'deposit' or type == 'withdrawal' %}
+                                            <td>{{ transaction.source.bank_name}}</td>
+                                            <td>{{ transaction.source.account_number }}</td>
                                             {% endif %}
-                                            {% if card %}
-                                            <td>3455 *********** 4532</td>
+                                            {% if type == 'deposit' %}
+                                            <td>{{ transaction.source }}</td>
                                             {% endif %}
-                                            <td>05/06/2017 5:30pm</td>
-                                               <td><span class="badge badge-warning badge-pill">Pending</span></td>
+                                            <td>{{ transaction.date_updated}}</td>
+                                               <td><span class="r-3 badge
+                                                {% if transaction.status == 0 %}
+                                                    badge-warning
+                                                {% elif transaction.status == 1 %}
+                                                    badge-success
+                                                {% else %}
+                                                badge-danger
+                                                {% endif %}
+">{{ transaction.get_status_display }}</span></td>
 
 
                                         </tr>
+                                        {% endfor %}
                                         </tbody>
 
                                     </table>
                                 </form>
-{#                                {% else %}#}
-{#                                    <h6>You have not made any {{ type }} transaction.</h6>#}
-{#                                {% endif %}#}
+                                {% else %}
+                                    <h6>You have not made any
+                                        {% if type == 'in_transfer' %}
+                                        Incoming Transfer
+                                    {% elif type == 'out_transfer' %}
+                                    Outgoing Transfer
+                                    {% elif type == 'deposit' %}
+                                    Deposit
+                                    {% elif type == 'withdrawal' %}
+                                    Withdrawal
+                                    {% endif %}
+                                        transaction.</h6>
+                                {% endif %}
                             </div>
                         </div>
                     </div>

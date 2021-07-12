@@ -13,12 +13,12 @@
                             <div class="table-responsive p-3">
                                 <h5>List of Beneficiaries</h5>
                                 <br/>
-{#                                {% if transactions.count <= 0 %}#}
+                                {% if beneficiaries.count > 0 %}
                                 <form>
                                     <table class="table table-striped table-hover r-0">
                                         <thead>
                                         <tr class="no-b">
-                                            <th><span class="bolder">&#8358</span></th>
+                                            <th><span class="bolder">#</span></th>
                                             <th>NAME</th>
                                             <th>EMAIL</th>
                                             <th>ACTION</th>
@@ -26,28 +26,28 @@
                                         </thead>
 
                                         <tbody>
-{#                                    {% for transaction in transactions %}#}
+                                    {% for beneficiary in beneficiaries %}
                                         <tr>
                                             <td><a href="#"><img id="user_img" class="user_avatar"
-                             {% if not investor.profile_picture %}
+                             {% if not beneficiary.user.profile_picture %}
                                 src="{% static 'dashboard/assets/img/dummy/u1.png'%}"
                              {% else %}
-                                src="{{ investor.profile_picture.url }}"
+                                src="{{ beneficiary.user.profile_picture.url }}"
                              {% endif %}
                                                                  alt="User Image"></a></td>
-                                            <td><a class="text-success" href="#">Olatunji Samuel</a></td>
+                                            <td><a class="text-success" href="#">{{ beneficiary.owner}}</a></td>
 
-                                            <td><a class="text-success" href="#">samuel.olatunji.197654@unn.edu.ng</a></td>
+                                            <td><a class="text-success" href="#">{{ beneficiary.user.email }}</a></td>
                                         <td><a href="#" class="btn btn-danger btn-sm">Remove</a></td>
                                         </tr>
-{#                                        {% endfor %}#}
+                                        {% endfor %}
 
                                         </tbody>
                                     </table>
                                 </form>
-{#                                {% else %}#}
-{#                                    <h6>You have any beneficiaries</h6>#}
-{#                                {% endif %}#}
+                                {% else %}
+                                    <h6>You do not have any beneficiaries</h6>
+                                {% endif %}
                             </div>
                         </div>
                     </div>

@@ -38,7 +38,7 @@
                                             <td><a class="text-success" href="#">{{ beneficiary.owner}}</a></td>
 
                                             <td><a class="text-success" href="#">{{ beneficiary.user.email }}</a></td>
-                                        <td><a href="#" class="btn btn-danger btn-sm">Remove</a></td>
+                                        <td><a href="#" onclick="delete_('{{ beneficiary.id }}')" class="btn btn-danger btn-sm">Remove</a></td>
                                         </tr>
                                         {% endfor %}
 
@@ -60,7 +60,21 @@
             href="{% url 'add_beneficiary' %}"
             class="btn-fab btn-fab-md fab-right fab-right-bottom-fixed shadow btn-success"><i
             class="icon-add"></i></a>
+    <form id="secret_form" action="{% url 'delete_beneficiary' %}" method="post">
+    {% csrf_token %}
+        <input type="hidden" name="secret_value" id="secret_value">
+    </form>
 {% endblock %}
 {% block script %}
-    <script></script>
+    <script>
+        const delete_ = (id_)=>{
+            let result = confirm("Remove Beneficiary?")
+            if (result){
+                let input_ = document.getElementById('secret_value')
+                let form_ = document.getElementById('secret_form')
+                input_.value = id_
+                form_.submit()
+            }
+        }
+    </script>
 {% endblock %}

@@ -86,10 +86,25 @@ def cards(request):
 
 def add_beneficiary(request):
     context = dict()
-    display_ = display(request)
-    if display_ is not None:
-        context.update(display_)
-    return render(request, 'Wallet/add_beneficiary.html', context)
+    if request.method == 'GET':
+        display_ = display(request)
+        if display_ is not None:
+            context.update(display_)
+        return render(request, 'Wallet/add_beneficiary.html', context)
+    if request.method == 'POST':
+        email = request.POST.get('email')
+        wallet = Wallet.objects.filter(user__email=email).first()
+        if wallet is None:
+            flash(request, 'This email does not belong to any account', 'info')
+            return redirect('add_beneficiary')
+        else:
+            my_wallet = Wallet.objects.get(user_id=request.user.id)
+            my_wallet.beneficiaries.add(wallet)
+            my_wallet.save()
+            flash(request, 'Beneficiary added successfully', 'success')
+            return redirect('beneficiaries')
+
+
 
 
 def add_card(request):
@@ -139,9 +154,11 @@ def make_transfer_api(request):
     pass
 
 
-def add_beneficiaries_api(request):
-    pass
-
-
-def delete_beneficiaries_api(request):
-    pass
+def delete_beneficiary(request):
+    if request.method == 'POST':
+        id_ = request.POST.get('secret_value')
+        wallet = Wallet.objects.get(id=int(id_))
+        my_wallet = Wallet.objects.get(user_id=request.user.id)
+        my_wallet.beneficiaries.remove(wallet)
+        flash(request, 'Beneficiary removed successfully', 'success')
+        return redirect('beneficiaries')

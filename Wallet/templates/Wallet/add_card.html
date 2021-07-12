@@ -12,12 +12,12 @@
                             <h5 class="bolder">Add a new Card</h5>
                         </div>
                         <div class="card-body">
-                            <form id="i_form" class="needs-validation" novalidate method="post" action="{% url 'deposit' %}">
+                            <form id="i_form" class="needs-validation" novalidate method="post" action="{% url 'add_card' %}">
                                 {% csrf_token %}
                                 <div class="form-row">
                                     <div class="col-md-12 mb-3">
                                         <label for="validationCustom01">Card Number</label>
-                                            <input id="pin"  name="pin" type="text" class="form-control text-center" maxlength="12" minlength="12" style="letter-spacing: 3px;"  placeholder="Enter your 12 - Digit Pin" required>
+                                            <input id="pin"  name="pin" type="text" class="form-control text-center" maxlength="16" minlength="16" style="letter-spacing: 3px;"  placeholder="Enter your 16 - Digit Pin" required>
                                         <div class="valid-feedback">
                                             Looks good!
                                         </div>
@@ -26,7 +26,7 @@
                                  <div class="form-row">
                                     <div class="col-md-12 mb-3">
                                         <label for="validationCustom03">CVV</label>
-                                        <input id="cvv"  name="amount" type="text" class="form-control text-center" maxlength="3" minlength="3" style="letter-spacing: 3px"  placeholder="Enter your CVV" required>
+                                        <input id="cvv"  name="cvv" type="text" class="form-control text-center" maxlength="3" minlength="3" style="letter-spacing: 3px"  placeholder="Enter your CVV" required>
                                         <small id="amt_warn" class="text-danger d-none">
 
                                         </small>
@@ -35,7 +35,7 @@
                                  <div class="form-row">
                                     <div class="col-md-12 mb-3">
                                         <label for="validationCustom03">Expiry Date</label>
-                                        <input id="exp_date"  name="amount" type="date" class="form-control text-center" required>
+                                        <input id="expiry"  name="expiry" type="date" class="form-control text-center" required>
                                         <small id="amt_warn" class="text-danger d-none">
 
                                         </small>
@@ -76,18 +76,18 @@
 
                         </div>
                          <div class="my-3">
-                             <small>12-Digit Card Number</small>
-                             <h3 id="show_plan">3456********4567</h3>
+                             <small>16-Digit Card Number</small>
+                             <h3 id="show_pin">3456 ******** 4567</h3>
                          </div>
                         <div class="my-3">
                             <div class="row">
                                 <div class="col-md-6">
                                     <strong> <p class="font-weight-bold">CVV</p></strong>
-                                  <div class="text-primary my-3">456</div>
+                                  <div id="show_cvv" class="text-primary my-3">456</div>
                                 </div>
                                 <div class="col-md-6">
                                     <strong> <p class="font-weight-bold">Expiry date</p></strong>
-                                  <div class="text-primary  my-3">12th of December 2012 (<span class="text-danger">Expired</span>)</div>
+                                  <div  id="show_expiry" class="text-primary  my-3">12th of December 2012 (<span class="text-danger">Expired</span>)</div>
                                 </div>
                             </div>
                             <div class="row">
@@ -104,56 +104,106 @@
 {% endblock %}
 {% block script %}
     <script>
-        const form_amt = document.getElementById('form_amt')
-        const show_amt = document.getElementById('show_amt')
-        const plan = document.getElementById('plan')
-        const show_plan = document.getElementById('show_plan')
-        const sub = document.getElementById('sub')
+      let first_element = document.getElementById('pin')
+      let copier_element = document.getElementById('show_pin')
+      first_element.onkeyup=()=>{
+          if (validate_element(first_element)){
+              consequence(first_element, copier_element)
+          }
+      }
+      let second_element = document.getElementById('cvv')
+      let copier_element2 = document.getElementById('show_cvv')
+      second_element.onkeyup=()=>{
+          if (validate_element(second_element)){
+              consequence2(second_element, copier_element2)
+          }
+      }
+      const validate_element = ele =>{
+          return true
+      }
+      const consequence =(first, copier)=>{
+          copier.innerText = show_pin(first.value)
+      }
+      const consequence2 =(first, copier)=>{
+          copier.innerText = first.value
+      }
 
-        form_amt.onkeyup =()=>{
-           if (Number(form_amt.value) !== 0 && !isNaN(Number(form_amt.value))){
-                 show_amt.innerText = Number(form_amt.value)
-            }else{
-                show_amt.innerText = 0
-            }
-            $.ajax({
-                url: "{% url 'deposit' %}",
-                data: {"plan": plan.value, "amount": form_amt.value},
-                json: true,
-                success:(data)=>{
-                    if (data.status === 'wrong')
-                        document.getElementById('amt_warn').className ='text-danger'
-                        document.getElementById('amt_warn').innerText = data.message
-                    if (data.status === 'correct')
-                        document.getElementById('amt_warn').className ='d-none'
-                         document.getElementById('show_rt').innerText = Number(data.returns)
+      const show_pin =(letter)=>{
+          let output =`${letter.substring(0, 4)} ******** ${letter.substring(12, 16)}`
+          return output.substring(0, letter.length+12)
+      }
+      let first_element2 = document.getElementById('expiry')
+      let copier_element3 = document.getElementById('show_expiry')
+      first_element2.onchange=()=>{
+          if (validate_element(first_element2)){
+              consequence2(first_element2, copier_element3)
+          }
+      }
 
-                }
-            })
-        }
-        plan.onchange = ()=>{
-            show_plan.innerText = plan.value
-        }
+      let form = document.getElementById('i_form')
+      let submit_button = document.getElementById('sub')
+      submit_button.onclick=()=>{
+          form.submit()
+      }
 
-        sub.onclick =()=>{
-             $.ajax({
-                url: "{% url 'deposit' %}",
-                data: {"plan": plan.value, "amount": form_amt.value},
-                json: true,
-                success:(data)=>{
-                    if (data.status === 'wrong') {
-                        document.getElementById('amt_warn').className = 'text-danger'
-                        document.getElementById('amt_warn').innerText = data.message
-                    }
-                    if (data.status === 'correct' && show_plan.innerText !== '') {
-                        document.getElementById('amt_warn').className = 'd-none'
-                        document.getElementById('show_rt').innerText = Number(data.returns)
-                        document.getElementById('i_form').submit()
-                    }
 
-                }
-            })
-        }
+
+
+
+
+
+
+
+        {#const form_amt = document.getElementById('form_amt')#}
+        {#const show_amt = document.getElementById('show_amt')#}
+        {#const plan = document.getElementById('plan')#}
+        {#const show_plan = document.getElementById('show_plan')#}
+        {#const sub = document.getElementById('sub')#}
+        {##}
+        {#form_amt.onkeyup =()=>{#}
+        {#   if (Number(form_amt.value) !== 0 && !isNaN(Number(form_amt.value))){#}
+        {#         show_amt.innerText = Number(form_amt.value)#}
+        {#    }else{#}
+        {#        show_amt.innerText = 0#}
+        {#    }#}
+        {#    $.ajax({#}
+        {#        url: "{% url 'deposit' %}",#}
+        {#        data: {"plan": plan.value, "amount": form_amt.value},#}
+        {#        json: true,#}
+        {#        success:(data)=>{#}
+        {#            if (data.status === 'wrong')#}
+        {#                document.getElementById('amt_warn').className ='text-danger'#}
+        {#                document.getElementById('amt_warn').innerText = data.message#}
+        {#            if (data.status === 'correct')#}
+        {#                document.getElementById('amt_warn').className ='d-none'#}
+        {#                 document.getElementById('show_rt').innerText = Number(data.returns)#}
+        {##}
+        {#        }#}
+        {#    })#}
+        {#}#}
+        {#plan.onchange = ()=>{#}
+        {#    show_plan.innerText = plan.value#}
+        {#}#}
+        {##}
+        {#sub.onclick =()=>{#}
+        {#     $.ajax({#}
+        {#        url: "{% url 'deposit' %}",#}
+        {#        data: {"plan": plan.value, "amount": form_amt.value},#}
+        {#        json: true,#}
+        {#        success:(data)=>{#}
+        {#            if (data.status === 'wrong') {#}
+        {#                document.getElementById('amt_warn').className = 'text-danger'#}
+        {#                document.getElementById('amt_warn').innerText = data.message#}
+        {#            }#}
+        {#            if (data.status === 'correct' && show_plan.innerText !== '') {#}
+        {#                document.getElementById('amt_warn').className = 'd-none'#}
+        {#                document.getElementById('show_rt').innerText = Number(data.returns)#}
+        {#                document.getElementById('i_form').submit()#}
+        {#            }#}
+        {##}
+        {#        }#}
+        {#    })#}
+        {#}#}
 
     </script>
 {% endblock %}

@@ -86,6 +86,9 @@ def dashboard(request):
 	context = dict()
 	user = User.objects.get(id=request.user.id)
 	context['wallet'] = user.wallet
+	display_ = display(request)
+	if display_ is not None:
+		context.update(display_)
 	return render(request, 'Account/dashboard.html', context=context)
 
 
@@ -99,7 +102,12 @@ def update_image(request):
 
 
 def edit_profile(request):
-	return render(request, 'Account/edit_profile.html')
+	context = dict()
+	if request.method == 'GET':
+		display_ = display(request)
+		if display_ is not None:
+			context.update(display_)
+		return render(request, 'Account/edit_profile.html', context=context)
 
 
 def logout(request):

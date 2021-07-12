@@ -28,7 +28,7 @@
                                     {% for card in cards %}
                                         <tr>
                                             <td>{{ card.first_digits }}</td>
-                                            <td>{{ card.last_digits }}</td>
+                                            <td>{{ card.cvv }}</td>
                                             <td class="
                                             {% if card.expired == 'Expired' %}
                                             text-danger
@@ -36,7 +36,7 @@
                                             text-success
                                             {% endif %}
 ">{{ card.expired }}</td>
-                                            <td><a href="#" class="btn btn-danger btn-sm">Remove</a></td>
+                                            <td><a href="#" onclick="delete_('{{ card.id }}')" class="btn btn-danger btn-sm">Remove</a></td>
                                         </tr>
                                         {% endfor %}
 
@@ -60,7 +60,21 @@
             href="{% url 'add_card' %}"
             class="btn-fab btn-fab-md fab-right fab-right-bottom-fixed shadow btn-success"><i
             class="icon-add"></i></a>
+    <form id="secret_form" action="{% url 'delete_card' %}" method="post">
+    {% csrf_token %}
+        <input type="hidden" name="secret_value" id="secret_value">
+    </form>
 {% endblock %}
 {% block script %}
-    <script></script>
+    <script>
+        const delete_ = (id_)=>{
+            let result = confirm("Delete Card?")
+            if (result){
+                let input_ = document.getElementById('secret_value')
+                let form_ = document.getElementById('secret_form')
+                input_.value = id_
+                form_.submit()
+            }
+        }
+    </script>
 {% endblock %}

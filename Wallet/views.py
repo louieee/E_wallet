@@ -1,9 +1,12 @@
 from django.contrib import auth
+from django.http import HttpResponse
 from django.shortcuts import render, redirect
 
 # Create your views here.
-from Account.models import User
-from E_Wallet.utilities import display
+from django.utils.datetime_safe import date
+
+from Account.models import User, Card
+from E_Wallet.utilities import display, flash
 from Wallet.models import Transaction, Wallet
 
 
@@ -19,11 +22,19 @@ def deposit(request):
 
 
 def transfer(request):
-    return render(request, 'Wallet/transfer.html')
+    context = dict()
+    display_ = display(request)
+    if display_ is not None:
+        context.update(display_)
+    return render(request, 'Wallet/transfer.html', context)
 
 
 def withdraw(request):
-    return render(request, 'Wallet/withdraw.html')
+    context = dict()
+    display_ = display(request)
+    if display_ is not None:
+        context.update(display_)
+    return render(request, 'Wallet/withdraw.html', context)
 
 
 def transactions(request):
@@ -45,25 +56,92 @@ def transactions(request):
         context['transactions'] = wallet.received_transfers()
     else:
         context['transactions'] = wallet.transfer_transactions()
-
+    display_ = display(request)
+    if display_ is not None:
+        context.update(display_)
     return render(request, 'Wallet/transactions.html', context=context)
 
 
 def beneficiaries(request):
+    context = dict()
     if request.method == 'GET':
         beneficiaries_ = Wallet.objects.get(user_id=request.user.id).beneficiaries.all()
-        return render(request, 'Wallet/beneficiaries.html', context={"beneficiaries": beneficiaries_})
+        context['beneficiaries'] = beneficiaries_
+        display_ = display(request)
+        if display_ is not None:
+            context.update(display_)
+        return render(request, 'Wallet/beneficiaries.html', context=context)
 
 
 def cards(request):
     if request.method == 'GET':
+        context = dict()
         cards_ = User.objects.get(id=request.user.id).cards()
-        return render(request, 'Wallet/cards.html', context={"cards": cards_})
+        context['cards'] = cards_
+        display_ = display(request)
+        if display_ is not None:
+            context.update(display_)
+        return render(request, 'Wallet/cards.html', context=context)
 
 
 def add_beneficiary(request):
-    return render(request, 'Wallet/add_beneficiary.html')
+    context = dict()
+    display_ = display(request)
+    if display_ is not None:
+        context.update(display_)
+    return render(request, 'Wallet/add_beneficiary.html', context)
 
 
 def add_card(request):
-    return render(request, 'Wallet/add_card.html')
+    context = dict()
+    if request.method == 'GET':
+        display_ = display(request)
+        if display_ is not None:
+            context.update(display_)
+        return render(request, 'Wallet/add_card.html', context)
+    if request.method == 'POST':
+        pin = request.POST.get('pin')
+        cvv = request.POST.get('cvv')
+        expiry = request.POST.get('expiry')
+        expiry_date = str(expiry).split('-')
+        expiry_date = date(year=int(expiry_date[0]), month=int(expiry_date[1]), day=int(expiry_date[2]))
+        card = Card.objects.filter(first_digits=str(pin)[:4], last_digits=str(pin)[-4:],
+                                   cvv=str(cvv), expiry_date=expiry_date).exists()
+        wallet = Wallet.objects.get(user_id=request.user.id)
+        if card:
+            flash(request, 'This card is owned by another user', 'danger')
+            return redirect('add_card')
+        else:
+            Card.objects.create(wallet_id=wallet.id, first_digits=str(pin)[:4], last_digits=str(pin)[-4:],
+                                cvv=str(cvv), expiry_date=expiry_date)
+            return redirect('cards')
+
+
+# list of fucking apis
+
+def delete_card(request):
+    if request.method == 'POST':
+        id_ = request.POST.get('secret_value')
+        Card.objects.filter(id=int(id_)).delete()
+        flash(request, 'Card deleted successfully', 'success')
+        return redirect('cards')
+
+
+def make_deposit_api(request):
+    pass
+
+
+def make_withdrawal_api(request):
+    pass
+
+
+def make_transfer_api(request):
+    pass
+
+
+def add_beneficiaries_api(request):
+    pass
+
+
+def delete_beneficiaries_api(request):
+    pass

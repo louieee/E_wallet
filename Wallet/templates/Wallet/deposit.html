@@ -162,56 +162,95 @@
 {% endblock %}
 {% block script %}
     <script>
-        const form_amt = document.getElementById('form_amt')
-        const show_amt = document.getElementById('show_amt')
-        const plan = document.getElementById('plan')
-        const show_plan = document.getElementById('show_plan')
-        const sub = document.getElementById('sub')
+      let first_element = document.getElementById('bank')
+      let copier_element = document.getElementById('show_bank')
+      first_element.onchange=()=>{
+          if (validate_element(first_element)){
+              consequence(first_element, copier_element)
+          }
+      }
+      let first_element3 = document.getElementById('acct_num')
+      let copier_element3 = document.getElementById('show_acct_num')
+      first_element3.onkeyup=()=>{
+          if (validate_element(first_element3)){
+              consequence(first_element3, copier_element3)
+          }
+      }
 
-        form_amt.onkeyup =()=>{
-           if (Number(form_amt.value) !== 0 && !isNaN(Number(form_amt.value))){
-                 show_amt.innerText = Number(form_amt.value)
-            }else{
-                show_amt.innerText = 0
-            }
-            $.ajax({
-                url: "{% url 'deposit' %}",
-                data: {"plan": plan.value, "amount": form_amt.value},
+      const validate_element = ele =>{
+          return true
+      }
+let first_element2 = document.getElementById('amount')
+      let copier_element2 = document.getElementById('show_amt')
+      first_element2.onchange=()=>{
+          if (validate_element(first_element2)){
+              consequence2(first_element2, copier_element2)
+          }
+      }
+
+      const consequence =(first, copier)=>{
+           copier.innerText = first.value
+        }
+
+     const consequence2 =(first, copier)=>{
+           $.ajax({
+                url: "{% url 'account_balance' %}",
                 json: true,
                 success:(data)=>{
-                    if (data.status === 'wrong')
-                        document.getElementById('amt_warn').className ='text-danger'
-                        document.getElementById('amt_warn').innerText = data.message
-                    if (data.status === 'correct')
-                        document.getElementById('amt_warn').className ='d-none'
-                         document.getElementById('show_rt').innerText = Number(data.returns)
-
+                    copier.innerText = first.value
+                    let acct_balance = Number(data) - Number(first.value)
+                    let acct_bal = document.getElementById('show_acct_bal')
+                    acct_bal.innerText = acct_balance.toString()
                 }
             })
-        }
-        plan.onchange = ()=>{
-            show_plan.innerText = plan.value
+
         }
 
-        sub.onclick =()=>{
-             $.ajax({
-                url: "{% url 'deposit' %}",
-                data: {"plan": plan.value, "amount": form_amt.value},
-                json: true,
-                success:(data)=>{
-                    if (data.status === 'wrong') {
-                        document.getElementById('amt_warn').className = 'text-danger'
-                        document.getElementById('amt_warn').innerText = data.message
-                    }
-                    if (data.status === 'correct' && show_plan.innerText !== '') {
-                        document.getElementById('amt_warn').className = 'd-none'
-                        document.getElementById('show_rt').innerText = Number(data.returns)
-                        document.getElementById('i_form').submit()
-                    }
 
-                }
-            })
-        }
+      let form = document.getElementById('i_form')
+      let submit_button = document.getElementById('sub')
+      submit_button.onclick=()=>{
+          if (validate_form()){
+              let otp = prompt('Please put in your 6 Digit Bank OTP')
+              if (isNaN(Number(otp)) || otp.length !== 6){
+                  alert('Invalid OTP')
+              }else{
+                  form.submit()
+              }
+          }
 
-    </script>
+      }
+
+   const validate_form =()=>{
+       let bank = document.getElementById('show_bank')
+       let acc__num = document.getElementById('show_acct_num')
+       let account = document.getElementById('show_acct_bal')
+       if (bank.innerText === 'undefined' || bank.innerText === ''){
+           alert('No Bank Selected')
+           return false
+       }
+       if (isNaN(Number(acc__num.innerText)) || acc__num.innerText === ''){
+           alert('Invalid Account Number')
+           return false
+       }
+       else if (isNaN(Number(account.innerText)) || Number(account.innerText) === 0) {
+           alert('Invalid Amount')
+           return false
+
+       }else  if (Number(account.innerText) < 0){
+           alert('Insufficient Funds')
+           return false
+       }else{
+           return true
+       }
+   }
+
+
+
+
+
+
+
+
+   </script>
 {% endblock %}

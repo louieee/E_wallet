@@ -38,7 +38,7 @@ class User(AbstractUser):
 
     def withdrawal_channels(self):
         # these are all the accounts where the user withdraws money to
-        return Source.objects.filter(wallet__user=self, type=Source.Choice.withdrawal)
+        return Source.objects.filter(wallet__user=self, type=Source.Choice.withdrawal).order_by('-id')
 
     def add_source(self, **kwargs):
         # this function allows a user to add a new source be it, funding sources or withdrawal channels

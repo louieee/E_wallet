@@ -16,7 +16,8 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path
 from .views import deposit, withdraw, transactions, cards, \
-    beneficiaries, transfer, add_beneficiary, add_card, delete_card, delete_beneficiary, get_account_balance, get_beneficiary
+    beneficiaries, transfer, add_beneficiary, add_card, delete_card, \
+    delete_beneficiary, get_account_balance, get_beneficiary, get_source
 urlpatterns = [
     path('deposit/', deposit, name="deposit"),
     path('withdraw/', withdraw, name="withdraw"),
@@ -29,6 +30,7 @@ urlpatterns = [
     path('beneficiaries/', beneficiaries, name="beneficiaries"),
     path('add_beneficiary/', add_beneficiary, name="add_beneficiary"),
     path('delete_beneficiary/', delete_beneficiary, name="delete_beneficiary"),
-    path('get_beneficiary/', get_beneficiary, name="get_beneficiary")
+    path('get_beneficiary/', get_beneficiary, name="get_beneficiary"),
+    path('get_source/', get_source, name='get_source')
 
 ]

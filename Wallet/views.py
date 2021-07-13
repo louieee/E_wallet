@@ -8,8 +8,8 @@ from django.shortcuts import render, redirect
 # Create your views here.
 from django.utils.datetime_safe import date
 
-from Account.models import User, Card
-from E_Wallet.utilities import display, flash, lock
+from Account.models import User, Card, Source
+from E_Wallet.utilities import display, flash, lock, banks
 from Wallet.models import Transaction, Wallet
 
 
@@ -51,10 +51,37 @@ def transfer(request):
 
 def withdraw(request):
     context = dict()
-    display_ = display(request)
-    if display_ is not None:
-        context.update(display_)
-    return render(request, 'Wallet/withdraw.html', context)
+    wallet = Wallet.objects.get(user_id=request.user.id)
+    if request.method == 'GET':
+        context['banks'] = banks
+        context['sources'] = wallet.user.withdrawal_channels()
+        display_ = display(request)
+        if display_ is not None:
+            context.update(display_)
+        return render(request, 'Wallet/withdraw.html', context)
+    if request.method == 'POST':
+        bank = request.POST.get('bank')
+        acct_num = request.POST.get('acct_num')
+        amount = request.POST.get('amount')
+        password = request.POST.get('password')
+        source_id = request.POST.get('source_id', None)
+        if not wallet.user.check_password(password):
+            lock(wallet.user.email)
+            flash(request, 'You entered an incorrect password', 'danger')
+            return redirect('login')
+        if source_id is not '':
+            source = Source.objects.get(id=int(source_id))
+        else:
+            source = Source.objects.filter(channel=Source.Choice.bank, type=Source.Choice.withdrawal,
+                                               bank_name=bank, account_number=acct_num, wallet_id=wallet.id).first()
+            if source is None:
+                source = Source.objects.create(type=Source.Choice.withdrawal, channel=Source.Choice.bank, bank_name=bank,
+                                                   account_number=acct_num, wallet_id=wallet.id)
+
+        Transaction.objects.create(amount=Decimal(amount), type=Transaction.Choice.withdrawal,
+                              status=Transaction.Choice.success, source=source, sender=wallet)
+        flash(request, 'Withdrawal is successful', 'success')
+        return redirect('dashboard')
 
 
 def transactions(request):
@@ -198,3 +225,14 @@ def get_account_balance(request):
     if request.method == 'GET':
         wallet = Wallet.objects.get(user_id=request.user.id)
         return HttpResponse(wallet.account_balance())
+
+
+def get_source(request):
+    id_ = request.GET.get('source_id')
+    source = Source.objects.filter(id=id_).first()
+    if source is None:
+        return JsonResponse({})
+    return JsonResponse({
+        "bank": source.bank_name,
+        "account_number": source.account_number
+    })

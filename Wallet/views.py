@@ -15,13 +15,44 @@ from Wallet.models import Transaction, Wallet
 
 def deposit(request):
     context = dict()
+    wallet = Wallet.objects.get(user_id=request.user.id)
+    context['sources'] = wallet.user.fund_sources()
+    context['cards'] = wallet.user.cards()
+    context['banks'] = banks
     if request.method == 'GET':
         display_ = display(request)
         if display_ is not None:
             context = display_
         return render(request, 'Wallet/deposit.html', context=context)
     if request.method == 'POST':
-        pass
+        source_id = request.POST.get('source_id')
+        amount = request.POST.get('amount')
+        card_id = request.POST.get('card_id')
+        bank = request.POST.get('bank')
+        account_number = request.POST.get('account_number')
+        transaction = Transaction.objects.create(type=Transaction.Choice.deposit,
+                                                 status=Transaction.Choice.success, sender=wallet,
+                                                 amount=Decimal(amount))
+        if source_id != '':
+            transaction.source_id = int(source_id)
+        elif card_id != '':
+            source = Source.objects.filter(type=Source.Choice.funding, channel=Source.Choice.card, card_id=int(card_id),
+                                           wallet_id=wallet).first()
+            if source is None:
+                source = Source.objects.create(type=Source.Choice.funding, channel=Source.Choice.card,
+                                               card_id=int(card_id), wallet_id=wallet)
+            transaction.source = source
+            pass
+        else:
+            source = Source.objects.filter(type=Source.Choice.funding, channel=Source.Choice.bank,
+                                           bank_name=bank, account_number=account_number, wallet=wallet).first()
+            if source is None:
+                source = Source.objects.create(type=Source.Choice.funding, channel=Source.Choice.bank,
+                                               bank_name=bank, account_number=account_number, wallet=wallet)
+            transaction.source = source
+        transaction.save()
+        flash(request, 'Deposit Transaction is successful', 'success')
+        return redirect('dashboard')
 
 
 def transfer(request):
@@ -41,7 +72,7 @@ def transfer(request):
             Transaction.objects.create(
                 amount=Decimal(amount), type=Transaction.Choice.transfer, sender=wallet,
                 receiver_id=int(beneficiary_id), status=Transaction.Choice.success)
-            flash(request, 'Transfer Successful', 'success')
+            flash(request, 'Transfer Transaction is Successful', 'success')
             return redirect('dashboard')
         else:
             lock(email=wallet.user.email, request=request)
@@ -73,13 +104,14 @@ def withdraw(request):
             source = Source.objects.get(id=int(source_id))
         else:
             source = Source.objects.filter(channel=Source.Choice.bank, type=Source.Choice.withdrawal,
-                                               bank_name=bank, account_number=acct_num, wallet_id=wallet.id).first()
+                                           bank_name=bank, account_number=acct_num, wallet_id=wallet.id).first()
             if source is None:
-                source = Source.objects.create(type=Source.Choice.withdrawal, channel=Source.Choice.bank, bank_name=bank,
-                                                   account_number=acct_num, wallet_id=wallet.id)
+                source = Source.objects.create(type=Source.Choice.withdrawal, channel=Source.Choice.bank,
+                                               bank_name=bank,
+                                               account_number=acct_num, wallet_id=wallet.id)
 
         Transaction.objects.create(amount=Decimal(amount), type=Transaction.Choice.withdrawal,
-                              status=Transaction.Choice.success, source=source, sender=wallet)
+                                   status=Transaction.Choice.success, source=source, sender=wallet)
         flash(request, 'Withdrawal is successful', 'success')
         return redirect('dashboard')
 

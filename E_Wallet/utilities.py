@@ -85,7 +85,6 @@ def send_verification_mail(email, type_, return_page=None, new_email=None):
 	from Account.models import User, Cache
 	user = User.objects.get(email=email)
 	key_ = prepare_cache_key(email)
-	print(key_)
 	data = json.dumps({"pin": key_[0], "return_page": return_page, 'code': key_[1], "email": new_email}, )
 	key = key_[1]
 	Cache.set(key, data)

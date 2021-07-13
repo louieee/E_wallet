@@ -74,7 +74,7 @@
                                             <select class="form-control" name="bank" id="bank">
                                                 <option selected value="">Select a Bank</option>
                                                 {% for bank in banks %}
-                                                    <option value="bank">{{ bank }}</option>
+                                                    <option value="{{ bank }}">{{ bank }}</option>
                                                 {% endfor %}
                                             </select>
                                         <div class="valid-feedback">
@@ -139,7 +139,7 @@
                              <h3 id="show_card_number"></h3>
                              <small id="show_bank">Bank Name</small>
                              <h3 id="show_bank_name"></h3>
-                             <small id="show_account"></small>
+                             <small id="show_account">Account Number</small>
                              <h3 id="show_account_number"></h3>
                          </div>
                         <div class="my-3">
@@ -150,7 +150,7 @@
                                 </div>
                                 <div class="col-md-6">
                                     <strong> <small>Account Balance: </small></strong>
-                                  <div class="text-primary s-24 my-3"><span class="bolder">&#8358</span><span class="sc-counter" id="show_amt">0</span></div>
+                                  <div class="text-primary s-24 my-3"><span class="bolder">&#8358</span><span class="sc-counter" id="show_acct_bal">0</span></div>
                                 </div>
                             </div>
                             <div class="row">
@@ -175,142 +175,148 @@
     let bank_c = document.getElementById('bank_container')
     let acct_c = document.getElementById('account_number')
 
+    let source = document.getElementById('source_id')
+    let show_bank = document.getElementById('show_bank')
+    let show_bank_name = document.getElementById('show_bank_name')
+    let show_account = document.getElementById('show_account')
+    let show_acct_num = document.getElementById('show_account_number')
+    let show_card = document.getElementById('show_card')
+    let show_card_num =  document.getElementById('show_card_number')
+
+    let select_channel = document.getElementById('select_channel')
+    let card_id = document.getElementById('card_id')
+    let bank = document.getElementById('bank')
+
+    let acct_num = document.getElementById('acct_number')
+
+    let amount = document.getElementById('amount')
+    let show_amt = document.getElementById('show_amt')
+    let show_acct_bal = document.getElementById('show_acct_bal')
+
+
+
+    card_id.onchange = () =>{
+        $.ajax({
+            url: "{% url 'get_card' %}",
+            data : {"card_id": card_id.value},
+            json: true,
+            success: (data)=>{
+                show_card_num.innerText = data
+            }
+        })
+    }
+
+    bank.onchange =() =>{
+        show_bank_name.innerText = bank.value
+    }
+
 
     deposit_choice.onchange=()=>{
         let value = deposit_choice.value
         if (value === '1'){
             fund_source_c.className = 'form-row'
-            source_channel_c.className = 'form-row d-none'
-            card_c.className = 'form-row d-none'
-            bank_c.className = 'form-row d-none'
-            acct_c.className = 'form-row d-none'}
+            acct_c.className = bank_c.className = source_channel_c.className = card_c.className  = 'form-row d-none'
+            }
         else if(value === '2'){
             fund_source_c.className = 'form-row d-none'
-            source_channel_c.className = 'form-row'
-            card_c.className = 'form-row'
-            bank_c.className = 'form-row'
-            acct_c.className = 'form-row '
+            acct_c.className = bank_c.className = source_channel_c.className = card_c.className  = 'form-row'
+
         }
     }
-{#    let target_c = document.getElementById('target_container')#}
-{##}
-{#     let first_element = document.getElementById('bank')#}
-{#      let copier_element = document.getElementById('show_bank')#}
-{#    let first_element3 = document.getElementById('acct_num')#}
-{#      let copier_element3 = document.getElementById('show_acct_num')#}
-{#    target_choice.onchange = ()=>{#}
-{#        let choice = target_choice.value#}
-{#        if (choice === '1') {#}
-{#            target_c.className = target_c.className.replace('d-none', '')#}
-{#            bank_c.className = 'form-row d-none'#}
-{#            acct_c.className = 'form-row d-none'#}
-{#        }else if(choice === '2'){#}
-{#            target_c.className = 'form-row d-none'#}
-{#            bank_c.className = bank_c.className.replace('d-none', '')#}
-{#            acct_c.className = acct_c.className.replace('d-none', '')#}
-{#        }#}
-{#    }#}
-{#    let source = document.getElementById('source')#}
-{#    source.onchange =()=>{#}
-{#        $.ajax(#}
-{#            {#}
-{#                url: '{% url 'get_source' %}',#}
-{#                data: {"source_id": source.value},#}
-{#                json: true,#}
-{#                success: (data)=>{#}
-{#                    if (data === '{}'){#}
-{##}
-{#                    }else{#}
-{#                        copier_element.innerText = data['bank']#}
-{#                        copier_element3.innerText = data['account_number']#}
-{#                    }#}
-{#                }#}
-{##}
-{#            }#}
-{#        )#}
-{#    }#}
-{##}
-{##}
-{##}
-{#      first_element.onchange=()=>{#}
-{#          if (validate_element(first_element)){#}
-{#              consequence(first_element, copier_element)#}
-{#          }#}
-{#      }#}
-{##}
-{#      first_element3.onkeyup=()=>{#}
-{#          if (validate_element(first_element3)){#}
-{#              consequence(first_element3, copier_element3)#}
-{#          }#}
-{#      }#}
-{##}
-{#      const validate_element = ele =>{#}
-{#          return true#}
-{#      }#}
-{#let first_element2 = document.getElementById('amount')#}
-{#      let copier_element2 = document.getElementById('show_amt')#}
-{#      first_element2.onchange=()=>{#}
-{#          if (validate_element(first_element2)){#}
-{#              consequence2(first_element2, copier_element2)#}
-{#          }#}
-{#      }#}
-{##}
-{#      const consequence =(first, copier)=>{#}
-{#           copier.innerText = first.value#}
-{#        }#}
-{##}
-{#     const consequence2 =(first, copier)=>{#}
-{#           $.ajax({#}
-{#                url: "{% url 'account_balance' %}",#}
-{#                json: true,#}
-{#                success:(data)=>{#}
-{#                    copier.innerText = first.value#}
-{#                    let acct_balance = Number(data) - Number(first.value)#}
-{#                    let acct_bal = document.getElementById('show_acct_bal')#}
-{#                    acct_bal.innerText = acct_balance.toString()#}
-{#                }#}
-{#            })#}
-{##}
-{#        }#}
-{##}
-{##}
-{#      let form = document.getElementById('i_form')#}
-{#      let submit_button = document.getElementById('sub')#}
-{#       submit_button.onclick=()=>{#}
-{#          if (validate_form()){#}
-{#              let otp = prompt('Please put in your 6 Digit Bank OTP')#}
-{#              if (isNaN(Number(otp)) || otp.length !== 6){#}
-{#                  alert('Invalid OTP')#}
-{#              }else{#}
-{#                  form.submit()#}
-{#              }#}
-{#          }#}
-{##}
-{#      }#}
-{##}
-{#   const validate_form =()=>{#}
-{#       let bank = document.getElementById('show_bank')#}
-{#       let acc__num = document.getElementById('show_acct_num')#}
-{#       let account = document.getElementById('show_acct_bal')#}
-{#       if (bank.innerText === 'undefined' || bank.innerText === ''){#}
-{#           alert('No Bank Selected')#}
-{#           return false#}
-{#       }#}
-{#       if (isNaN(Number(acc__num.innerText)) || acc__num.innerText === ''){#}
-{#           alert('Invalid Account Number')#}
-{#           return false#}
-{#       }#}
-{#       else if (isNaN(Number(account.innerText)) || Number(account.innerText) === 0) {#}
-{#           alert('Invalid Amount')#}
-{#           return false#}
-{##}
-{#       }else  if (Number(account.innerText) < 0){#}
-{#           alert('Insufficient Funds')#}
-{#           return false#}
-{#       }else{#}
-{#           return true#}
-{#       }#}
-{#   }#}
+
+    source.onchange = () =>{
+        $.ajax(
+            {
+                url: "{% url 'get_source' %}",
+                data: {"source_id": source.value},
+                json: true,
+                success:(data)=>{
+                    if (data.hasOwnProperty('card')){
+                         show_acct_num.className = show_bank.className = show_bank_name.className = show_account.className = 'd-none'
+                        show_card.className =  show_card_num.className = ''
+                        show_card_num.innerText = data['card']
+                    }else if (data.hasOwnProperty('bank')){
+                        show_card.className =  show_card_num.className = 'd-none'
+                        show_acct_num.className = show_bank.className = show_bank_name.className = show_account.className = ''
+                        show_acct_num.innerText = data['account_number']
+                        show_bank_name.innerText = data['bank']
+                    }
+                }
+
+            }
+        )
+    }
+
+    select_channel.onchange =()=>{
+        let value = select_channel.value
+        if (value === 'bank'){
+            acct_c.className = bank_c.className = 'form-row'
+            card_c.className  = 'form-row d-none'
+            show_card.className =  show_card_num.className = 'd-none'
+            show_acct_num.className = show_bank.className = show_bank_name.className = show_account.className = ''
+        }else if (value === 'card'){
+            acct_c.className = bank_c.className = 'form-row d-none'
+            card_c.className  = 'form-row'
+            show_card.className =  show_card_num.className = ''
+            show_acct_num.className = show_bank.className = show_bank_name.className = show_account.className = 'd-none'
+        }
+    }
+
+    acct_num.onkeyup = () =>{
+        show_acct_num.innerText = acct_num.value
+    }
+
+    amount.onchange =()=>{
+         $.ajax({
+                url: "{% url 'account_balance' %}",
+                json: true,
+                success:(data)=>{
+                    show_amt.innerText = amount.value
+                    let acct_balance = Number(data) + Number(amount.value)
+                    show_acct_bal.innerText = acct_balance.toString()
+                }
+            })
+    }
+
+      let form = document.getElementById('i_form')
+      let submit_button = document.getElementById('sub')
+       submit_button.onclick=()=>{
+          if (validate_form()){
+              let otp = prompt('Please put in your 6 Digit Bank OTP')
+              if (isNaN(Number(otp)) || otp.length !== 6){
+                  alert('Invalid OTP')
+              }else{
+                  form.submit()
+              }
+          }
+
+      }
+
+   const validate_form =()=>{
+       let bank = document.getElementById('show_bank_name')
+       let acc__num = document.getElementById('show_account_number')
+       let account = document.getElementById('show_acct_bal')
+
+       if (bank.className !== 'd-none' && (bank.innerText === 'undefined' || bank.innerText === '')){
+           alert('No Bank Selected')
+           return false
+       }
+       if (show_card_num.className !== 'd-none' && (show_card_num.innerText === 'undefined' || show_card_num.innerText === '')){
+           alert('No Card Selected')
+           return false
+       }
+       if (acc__num.className !== 'd-none' && (isNaN(Number(acc__num.innerText)) || acc__num.innerText === '')){
+           alert('Invalid Account Number')
+           return false
+       }
+       else if (isNaN(Number(show_amt.innerText)) || Number(show_amt.innerText) <= 0) {
+           alert('Invalid Amount')
+           return false
+
+       }else{
+           return true
+       }
+   }
 
 
 

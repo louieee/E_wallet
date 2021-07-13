@@ -37,10 +37,10 @@ def deposit(request):
             transaction.source_id = int(source_id)
         elif card_id != '':
             source = Source.objects.filter(type=Source.Choice.funding, channel=Source.Choice.card, card_id=int(card_id),
-                                           wallet_id=wallet).first()
+                                           wallet=wallet).first()
             if source is None:
                 source = Source.objects.create(type=Source.Choice.funding, channel=Source.Choice.card,
-                                               card_id=int(card_id), wallet_id=wallet)
+                                               card_id=int(card_id), wallet=wallet)
             transaction.source = source
             pass
         else:
@@ -264,7 +264,18 @@ def get_source(request):
     source = Source.objects.filter(id=id_).first()
     if source is None:
         return JsonResponse({})
-    return JsonResponse({
-        "bank": source.bank_name,
-        "account_number": source.account_number
-    })
+    if source.channel == Source.Choice.bank:
+        return JsonResponse({
+            "bank": source.bank_name,
+            "account_number": source.account_number
+        })
+    else:
+        return JsonResponse({
+            "card": source.card.__str__()
+        })
+
+def get_card(request):
+    if request.method == 'GET':
+        card_id = request.GET.get('card_id')
+        card = Card.objects.get(id=int(card_id))
+        return HttpResponse(card.__str__())

@@ -17,7 +17,7 @@ from django.contrib import admin
 from django.urls import path
 from .views import deposit, withdraw, transactions, cards, \
     beneficiaries, transfer, add_beneficiary, add_card, delete_card, \
-    delete_beneficiary, get_account_balance, get_beneficiary, get_source
+    delete_beneficiary, get_account_balance, get_beneficiary, get_source, get_card
 urlpatterns = [
     path('deposit/', deposit, name="deposit"),
     path('withdraw/', withdraw, name="withdraw"),
@@ -26,6 +26,7 @@ urlpatterns = [
     path('account_balance/', get_account_balance, name="account_balance"),
     path('cards/', cards, name="cards"),
     path('add_card/', add_card, name="add_card"),
+    path('get_card/',get_card, name="get_card" ),
     path('delete_card/', delete_card, name="delete_card"),
     path('beneficiaries/', beneficiaries, name="beneficiaries"),
     path('add_beneficiary/', add_beneficiary, name="add_beneficiary"),

@@ -1,12 +1,15 @@
+import json
+from decimal import Decimal
+
 from django.contrib import auth
-from django.http import HttpResponse
+from django.http import HttpResponse, JsonResponse
 from django.shortcuts import render, redirect
 
 # Create your views here.
 from django.utils.datetime_safe import date
 
 from Account.models import User, Card
-from E_Wallet.utilities import display, flash
+from E_Wallet.utilities import display, flash, lock
 from Wallet.models import Transaction, Wallet
 
 
@@ -23,10 +26,27 @@ def deposit(request):
 
 def transfer(request):
     context = dict()
-    display_ = display(request)
-    if display_ is not None:
-        context.update(display_)
-    return render(request, 'Wallet/transfer.html', context)
+    wallet = Wallet.objects.get(user_id=request.user.id)
+    if request.method == 'GET':
+        context['beneficiaries'] = wallet.beneficiaries.all()
+        display_ = display(request)
+        if display_ is not None:
+            context.update(display_)
+        return render(request, 'Wallet/transfer.html', context)
+    if request.method == 'POST':
+        beneficiary_id = request.POST.get('ben')
+        amount = request.POST.get('amount')
+        password = request.POST.get('password')
+        if wallet.user.check_password(password):
+            Transaction.objects.create(
+                amount=Decimal(amount), type=Transaction.Choice.transfer, sender=wallet,
+                receiver_id=int(beneficiary_id), status=Transaction.Choice.success)
+            flash(request, 'Transfer Successful', 'success')
+            return redirect('dashboard')
+        else:
+            lock(email=wallet.user.email, request=request)
+            flash(request, 'The password is incorrect', 'danger')
+            return redirect('login')
 
 
 def withdraw(request):
@@ -105,8 +125,6 @@ def add_beneficiary(request):
             return redirect('beneficiaries')
 
 
-
-
 def add_card(request):
     context = dict()
     if request.method == 'GET':
@@ -162,3 +180,21 @@ def delete_beneficiary(request):
         my_wallet.beneficiaries.remove(wallet)
         flash(request, 'Beneficiary removed successfully', 'success')
         return redirect('beneficiaries')
+
+
+def get_beneficiary(request):
+    if request.method == 'GET':
+        id_ = request.GET.get('ben_id')
+        wallet = Wallet.objects.filter(id=int(id_)).first()
+        if wallet is not None:
+            return JsonResponse({
+                "full_name": wallet.owner(),
+                "email": wallet.user.email
+            })
+        return JsonResponse({})
+
+
+def get_account_balance(request):
+    if request.method == 'GET':
+        wallet = Wallet.objects.get(user_id=request.user.id)
+        return HttpResponse(wallet.account_balance())

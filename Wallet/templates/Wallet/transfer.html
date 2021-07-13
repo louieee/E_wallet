@@ -12,15 +12,16 @@
                             <h5 class="bolder">Make Transfer</h5>
                         </div>
                         <div class="card-body">
-                            <form id="i_form" class="needs-validation" novalidate method="post" action="{% url 'deposit' %}">
+                            <form id="i_form" class="needs-validation" novalidate method="post" action="{% url 'transfer' %}">
                                 {% csrf_token %}
                                  <div class="form-row">
                                     <div class="col-md-12 mb-3">
                                         <label for="validationCustom01">Select a Beneficiary</label>
-                                            <select class="form-control">
-                                                <option>Ohaegbu Louis</option>
-                                                <option>Chidubem Sopuru</option>
-                                                <option>Sochima Amarachi</option>
+                                            <select class="form-control" name="ben" id="ben">
+                                                <option value="-1" selected>select a beneficiary</option>
+                                                {% for ben in beneficiaries %}
+                                                    <option value="{{ ben.id }}">{{ ben.user }}</option>
+                                                {% endfor %}
                                             </select>
                                         <div class="valid-feedback">
                                             Looks good!
@@ -31,7 +32,7 @@
                                  <div class="form-row">
                                     <div class="col-md-12 mb-3">
                                         <label for="validationCustom03">Amount</label>
-                                        <input id="form_amt"  name="amount" type="text" class="form-control"  placeholder="Amount" required>
+                                        <input id="amount"  name="amount" type="text" class="form-control"  placeholder="Amount" required>
                                         <small id="amt_warn" class="text-danger d-none">
 
                                         </small>
@@ -40,7 +41,7 @@
                                 <div class="form-row">
                                     <div class="col-md-12 mb-3">
                                         <label for="validationCustom01">Account Password</label>
-                                            <input class="form-control text-center" style="letter-spacing: 8px;" placeholder="********" type="password" minlength="8"/>
+                                            <input name="password" class="form-control text-center" style="letter-spacing: 8px;" placeholder="********" type="password" required minlength="8"/>
                                         <div class="valid-feedback">
                                             Looks good!
                                         </div>
@@ -82,19 +83,19 @@
                         </div>
                          <div class="my-3">
                              <small>Recipient's Name</small>
-                             <h4 id="show_plan">Sochima Amarachi</h4>
+                             <h4 id="show_ben"></h4>
                              <small>Recipient's Email</small>
-                             <h5 id="show_plan">amarachi.sochima.1975643@unn.edu.ng</h5>
+                             <h5 id="ben_email"></h5>
                          </div>
                         <div class="my-3">
                             <div class="row">
                                 <div class="col-md-6">
                                     <strong> <small>Transferred Amount: </small></strong>
-                                  <div class="text-primary s-24 my-3"><span class="bolder">&#8358</span><span class="sc-counter" id="show_amt">0</span></div>
+                                  <div class="text-primary s-24 my-3"><span class="bolder">&#8358</span><span class="sc-counter" id="show_amount">0</span></div>
                                 </div>
                                 <div class="col-md-6">
                                     <strong> <small>Account Balance: </small></strong>
-                                  <div class="text-primary s-24 my-3"><span class="bolder">&#8358</span><span class="sc-counter" id="show_rt">0</span></div>
+                                  <div class="text-primary s-24 my-3"><span class="bolder">&#8358</span><span class="sc-counter" id="acct_bal">0</span></div>
                                 </div>
                             </div>
                             <div class="row">
@@ -110,57 +111,90 @@
     </div>
 {% endblock %}
 {% block script %}
-    <script>
-        const form_amt = document.getElementById('form_amt')
-        const show_amt = document.getElementById('show_amt')
-        const plan = document.getElementById('plan')
-        const show_plan = document.getElementById('show_plan')
-        const sub = document.getElementById('sub')
+   <script>
+      let first_element = document.getElementById('ben')
+      let copier_element = document.getElementById('show_ben')
+      first_element.onchange=()=>{
+          if (validate_element(first_element)){
+              consequence(first_element, copier_element)
+          }
+      }
 
-        form_amt.onkeyup =()=>{
-           if (Number(form_amt.value) !== 0 && !isNaN(Number(form_amt.value))){
-                 show_amt.innerText = Number(form_amt.value)
-            }else{
-                show_amt.innerText = 0
-            }
-            $.ajax({
-                url: "{% url 'deposit' %}",
-                data: {"plan": plan.value, "amount": form_amt.value},
+      const validate_element = ele =>{
+          return true
+      }
+let first_element2 = document.getElementById('amount')
+      let copier_element2 = document.getElementById('show_amount')
+      first_element2.onchange=()=>{
+          if (validate_element(first_element2)){
+              consequence2(first_element2, copier_element2)
+          }
+      }
+
+      const consequence =(first, copier)=>{
+           $.ajax({
+                url: "{% url 'get_beneficiary' %}",
+                data: {"ben_id": Number(first.value)},
                 json: true,
                 success:(data)=>{
-                    if (data.status === 'wrong')
-                        document.getElementById('amt_warn').className ='text-danger'
-                        document.getElementById('amt_warn').innerText = data.message
-                    if (data.status === 'correct')
-                        document.getElementById('amt_warn').className ='d-none'
-                         document.getElementById('show_rt').innerText = Number(data.returns)
-
-                }
-            })
-        }
-        plan.onchange = ()=>{
-            show_plan.innerText = plan.value
-        }
-
-        sub.onclick =()=>{
-             $.ajax({
-                url: "{% url 'deposit' %}",
-                data: {"plan": plan.value, "amount": form_amt.value},
-                json: true,
-                success:(data)=>{
-                    if (data.status === 'wrong') {
+                    if (data === '{}') {
                         document.getElementById('amt_warn').className = 'text-danger'
-                        document.getElementById('amt_warn').innerText = data.message
-                    }
-                    if (data.status === 'correct' && show_plan.innerText !== '') {
-                        document.getElementById('amt_warn').className = 'd-none'
-                        document.getElementById('show_rt').innerText = Number(data.returns)
-                        document.getElementById('i_form').submit()
-                    }
-
+                    }else{
+                        copier_element.innerText = data['full_name']
+                        let ben_email = document.getElementById('ben_email')
+                        ben_email.innerText = data['email']
                 }
-            })
+            }})
         }
 
-    </script>
+     const consequence2 =(first, copier)=>{
+           $.ajax({
+                url: "{% url 'account_balance' %}",
+                json: true,
+                success:(data)=>{
+                    copier.innerText = first.value
+                    let acct_balance = Number(data) - Number(first.value)
+                    let acct_bal = document.getElementById('acct_bal')
+                    acct_bal.innerText = acct_balance.toString()
+                }
+            })
+
+        }
+
+
+      let form = document.getElementById('i_form')
+      let submit_button = document.getElementById('sub')
+      submit_button.onclick=()=>{
+          if (validate_form()){
+              form.submit()
+          }
+
+      }
+
+   const validate_form =()=>{
+       let name = document.getElementById('show_ben')
+       let account = document.getElementById('acct_bal')
+       if (name.innerText === 'undefined' || name.innerText === ''){
+           alert('No Beneficiary Selected')
+           return false
+       }
+       else if (isNaN(Number(account.innerText))) {
+           alert('Invalid Amount')
+           return false
+       }else  if (Number(account.innerText) < 0){
+           alert('Insufficient Funds')
+           return false
+       }else{
+           return true
+       }
+   }
+
+
+
+
+
+
+
+
+   </script>
 {% endblock %}

@@ -14,11 +14,11 @@ class Wallet(models.Model):
         return self.user.__str__()
 
     def transactions(self):
-        return Transaction.objects.filter(Q(sender=self) | Q(receiver=self))
+        return Transaction.objects.filter(Q(sender=self) | Q(receiver=self)).order_by('-id')
 
     def deposit_transactions(self):
         # this returns all the user's deposit transactions
-        return Transaction.objects.filter(type=Transaction.Choice.deposit, sender=self)
+        return Transaction.objects.filter(type=Transaction.Choice.deposit, sender=self).order_by('-id')
 
     def pending_deposits(self):
         # this returns all the user's deposit transactions that are still pending
@@ -34,7 +34,7 @@ class Wallet(models.Model):
 
     def withdrawal_transactions(self):
         # this returns all the user's withdrawal transactions
-        return Transaction.objects.filter(type=Transaction.Choice.withdrawal, sender=self)
+        return Transaction.objects.filter(type=Transaction.Choice.withdrawal, sender=self).order_by('-id')
 
     def pending_withdrawals(self):
         # this returns all the user's withdrawal transactions that are still pending
@@ -50,7 +50,7 @@ class Wallet(models.Model):
 
     def transfer_transactions(self):
         # this returns all the user's transfer transactions
-        return Transaction.objects.filter(type=Transaction.Choice.transfer, sender=self)
+        return Transaction.objects.filter(type=Transaction.Choice.transfer, sender=self).order_by('-id')
 
     def pending_transfers(self):
         # this returns all the user's transfer transactions that are still pending
@@ -67,7 +67,7 @@ class Wallet(models.Model):
     def received_transfers(self):
         # this returns all the user's received transfer transactions
         return Transaction.objects.filter(type=Transaction.Choice.transfer, receiver=self,
-                                          status=Transaction.Choice.success)
+                                          status=Transaction.Choice.success).order_by('-id')
 
     def total_deposits(self):
         # this sums up all the user's successful deposit transactions

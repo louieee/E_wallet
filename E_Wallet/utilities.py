@@ -229,4 +229,4 @@ def make_json(csvFilePath):
 
 # Call the make_json function
 
-banks = make_json('E_Wallet\\banks.csv')
+banks = make_json(config('BANK_DIR'))

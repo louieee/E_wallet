@@ -27,10 +27,10 @@ def login(request):
 			flash(request, 'You do not have an account with us.', 'warning')
 			return redirect('signup')
 		if not user.is_active and user.last_login is None:
-			flash(request, 'Please verify your account!', 'danger')
 			send_verification_mail(user.email, 'Account Verification ',
 								   'login')
 			request.session['email'] = user.email
+			flash(request, f"Your Pin is {Cache.get(email)['pin']}", 'info')
 			return redirect('verify')
 		login_time = check_lock(user)
 		if login_time is not None:
@@ -70,10 +70,10 @@ def signup(request):
 				user.save()
 				wallet = Wallet.objects.create(user=user)
 				wallet.save()
-				flash(request, 'Your account has been created successfully', 'success')
 				send_verification_mail(user.email, 'Account ',
 									   'login')
 				request.session['email'] = user.email
+				flash(request, f"Your Pin is {Cache.get(user.email)['pin']}", 'info')
 				return redirect('verify')
 			else:
 				flash(request, 'This not a unn email address!', 'danger')
@@ -130,6 +130,7 @@ def forgot_password(request):
 		if user is not None:
 			send_verification_mail(email=email, type_='Password Reset', return_page='reset_password')
 			request.session['email'] = user.email
+			flash(request, f"Your Pin is {Cache.get(email)['pin']}", 'info')
 			return redirect('verify')
 		else:
 			flash(request, 'You do not have an account with us', 'danger')
@@ -163,6 +164,7 @@ def enter_key(request):
 			lock(email, request=request)
 			flash(request, 'This token is incorrect!', 'danger')
 			request.session['email'] = email
+			flash(request, f"Your Pin is {Cache.get(email)['pin']}", 'info')
 			return redirect('verify')
 		else:
 			open_lock(email, final=True)

@@ -63,8 +63,8 @@ def send_mail(user, title, message, to, code=None, attachments=None, data=None):
 				msg.attach(att)
 		server.sendmail(f'{sender}', msg['to'], msg.as_string())
 		server.quit()
-	except (socket.gaierror, smtplib.SMTPAuthenticationError):
-		print('email is offline')
+	except (socket.gaierror, smtplib.SMTPAuthenticationError) as e:
+		print(e)
 
 
 def get_token():

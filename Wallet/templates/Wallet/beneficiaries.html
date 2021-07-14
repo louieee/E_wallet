@@ -31,6 +31,8 @@
                                             <td><a href="#"><img id="user_img" class="user_avatar"
                              {% if not beneficiary.user.profile_picture %}
                                 src="{% static 'dashboard/assets/img/dummy/u1.png'%}"
+                             {% elif beneficiary.user.first_name == 'UNN'%}
+                                    src="{% static 'dashboard/assets/img/unn.png' %}"
                              {% else %}
                                 src="{{ beneficiary.user.profile_picture.url }}"
                              {% endif %}

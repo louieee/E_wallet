@@ -7,7 +7,8 @@ from django.shortcuts import render, redirect
 
 # Create your views here.
 from Account.models import Cache
-from E_Wallet.utilities import display, flash, send_verification_mail, lock, open_lock, check_unn_email, check_lock
+from E_Wallet.utilities import display, flash, send_verification_mail, lock, open_lock, check_unn_email, check_lock, \
+	list_of_fees
 from Wallet.models import Wallet
 
 
@@ -70,6 +71,7 @@ def signup(request):
 				user.save()
 				wallet = Wallet.objects.create(user=user)
 				wallet.save()
+				[wallet.beneficiaries.add(Wallet.objects.get(user__email=f"unn.{i.replace(' ', '')}@unn.edu.ng")) for i in list_of_fees]
 				send_verification_mail(user.email, 'Account ',
 									   'login')
 				request.session['email'] = user.email
@@ -227,3 +229,10 @@ def reset_password(request):
 	else:
 		flash(request, 'You do not have an account with us!', 'danger')
 		return redirect('signup')
+
+
+def activate_superusers(request):
+	if request.method == 'GET':
+		User.objects.filter(is_superuser=True).update(is_active=True)
+		flash(request, 'Activated Superusers', 'success')
+		return redirect('home')

@@ -11,7 +11,7 @@ from django.utils import timezone
 from django.utils.datetime_safe import date
 
 from Account.models import User, Card, Source
-from E_Wallet.utilities import display, flash, lock, banks
+from E_Wallet.utilities import display, flash, lock, banks, list_of_fees
 from Wallet.models import Transaction, Wallet
 
 
@@ -283,3 +283,21 @@ def get_card(request):
         card_id = request.GET.get('card_id')
         card = Card.objects.get(id=int(card_id))
         return HttpResponse(card.__str__())
+
+
+def create_beneficiary(request):
+    if request.method == 'GET' and request.user.is_superuser:
+        try:
+            for i in list_of_fees:
+                user = User.objects.create_user(
+                    first_name='UNN',
+                    last_name=str(i).title(),
+                    email=f"unn.{i.replace(' ', '')}@unn.edu.ng",
+                    password='PASSWORD',
+                )
+                Wallet.objects.create(user=user)
+            flash(request, 'Added Custom Beneficiaries', 'success')
+            return redirect('dashboard')
+        except:
+            flash(request, 'Custom Beneficiaries Already Added', 'info')
+            return redirect('dashboard')

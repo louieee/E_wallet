@@ -22,5 +22,5 @@ from E_Wallet.settings import MEDIA_URL, MEDIA_ROOT
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include('Account.urls')),
-    path('wallet/', include('Wallet.urls'))
+    path('wallet/', include('Wallet.urls')),
 ]+ static(MEDIA_URL, document_root=MEDIA_ROOT)

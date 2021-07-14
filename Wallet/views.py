@@ -6,6 +6,7 @@ from django.http import HttpResponse, JsonResponse
 from django.shortcuts import render, redirect
 
 # Create your views here.
+from django.utils import timezone
 from django.utils.datetime_safe import date
 
 from Account.models import User, Card, Source
@@ -17,7 +18,7 @@ def deposit(request):
     context = dict()
     wallet = Wallet.objects.get(user_id=request.user.id)
     context['sources'] = wallet.user.fund_sources()
-    context['cards'] = wallet.user.cards()
+    context['cards'] = wallet.user.cards().filter(expiry_date__gt=timezone.now().date())
     context['banks'] = banks
     if request.method == 'GET':
         display_ = display(request)

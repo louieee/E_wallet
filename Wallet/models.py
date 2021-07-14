@@ -10,6 +10,9 @@ class Wallet(models.Model):
     user = models.OneToOneField('Account.User', on_delete=models.CASCADE)
     beneficiaries = models.ManyToManyField('Wallet.Wallet', blank=True)
 
+    def __str__(self):
+        return f'{self.user.__str__()} wallet'
+
     def owner(self):
         return self.user.__str__()
 

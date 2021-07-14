@@ -29,9 +29,9 @@
                                     {% for beneficiary in beneficiaries %}
                                         <tr>
                                             <td><a href="#"><img id="user_img" class="user_avatar"
-                             {% if not beneficiary.user.profile_picture %}
+                             {% if not beneficiary.user.profile_picture and beneficiary.user.first_name != 'UNN' %}
                                 src="{% static 'dashboard/assets/img/dummy/u1.png'%}"
-                             {% elif beneficiary.user.first_name == 'UNN'%}
+                             {% elif not beneficiary.user.profile_picture and beneficiary.user.first_name == 'UNN'%}
                                     src="{% static 'dashboard/assets/img/unn.png' %}"
                              {% else %}
                                 src="{{ beneficiary.user.profile_picture.url }}"
@@ -40,7 +40,7 @@
                                             <td><a class="text-success" href="#">{{ beneficiary.owner}}</a></td>
 
                                             <td><a class="text-success" href="#">{{ beneficiary.user.email }}</a></td>
-                                        <td><a href="#" onclick="delete_('{{ beneficiary.id }}')" class="btn btn-danger btn-sm">Remove</a></td>
+                                        <td><a href="#" {% if beneficiary.user.first_name != 'UNN' %}onclick="delete_('{{ beneficiary.id }}')" {% endif %} class="btn btn-danger btn-sm">Remove</a></td>
                                         </tr>
                                         {% endfor %}
 

@@ -72,7 +72,7 @@
                                             <td>{{ transaction.source.account_number }}</td>
                                             {% endif %}
                                             {% if type == 'deposit' %}
-                                            <td>{{ transaction.source }}</td>
+                                            <td>{{ transaction.source.card }}</td>
                                             {% endif %}
                                             <td>{{ transaction.date_updated}}</td>
                                                <td><span class="r-3 badge

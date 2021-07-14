@@ -83,7 +83,7 @@ def signup(request):
 		context.update(display_)
 	return render(request, 'Account/signup.html', context=context)
 
-
+@login_required(login_url='login')
 def dashboard(request):
 	context = dict()
 	user = User.objects.get(id=request.user.id)
@@ -102,7 +102,7 @@ def update_image(request):
 		request.user.save()
 		return redirect('dashboard')
 
-
+@login_required(login_url='login')
 def edit_profile(request):
 	context = dict()
 	if request.method == 'GET':
@@ -111,7 +111,7 @@ def edit_profile(request):
 			context.update(display_)
 		return render(request, 'Account/edit_profile.html', context=context)
 
-
+@login_required(login_url='login')
 def logout(request):
 	auth.logout(request)
 	return redirect('home')
@@ -178,7 +178,7 @@ def enter_key(request):
 				Cache.delete_(email)
 			return redirect(token_['return_page'])
 
-
+@login_required(login_url='login')
 def change_password(request):
 	if request.method == 'POST':
 		user = User.objects.get(id=request.user.id)

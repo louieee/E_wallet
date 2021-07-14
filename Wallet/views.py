@@ -2,6 +2,7 @@ import json
 from decimal import Decimal
 
 from django.contrib import auth
+from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse, JsonResponse
 from django.shortcuts import render, redirect
 
@@ -14,6 +15,7 @@ from E_Wallet.utilities import display, flash, lock, banks
 from Wallet.models import Transaction, Wallet
 
 
+@login_required(login_url='login')
 def deposit(request):
     context = dict()
     wallet = Wallet.objects.get(user_id=request.user.id)
@@ -56,6 +58,7 @@ def deposit(request):
         return redirect('dashboard')
 
 
+@login_required(login_url='login')
 def transfer(request):
     context = dict()
     wallet = Wallet.objects.get(user_id=request.user.id)
@@ -81,6 +84,7 @@ def transfer(request):
             return redirect('login')
 
 
+@login_required(login_url='login')
 def withdraw(request):
     context = dict()
     wallet = Wallet.objects.get(user_id=request.user.id)
@@ -117,6 +121,7 @@ def withdraw(request):
         return redirect('dashboard')
 
 
+@login_required(login_url='login')
 def transactions(request):
     context = dict()
     type_ = request.GET['type']
@@ -142,6 +147,7 @@ def transactions(request):
     return render(request, 'Wallet/transactions.html', context=context)
 
 
+@login_required(login_url='login')
 def beneficiaries(request):
     context = dict()
     if request.method == 'GET':
@@ -153,6 +159,7 @@ def beneficiaries(request):
         return render(request, 'Wallet/beneficiaries.html', context=context)
 
 
+@login_required(login_url='login')
 def cards(request):
     if request.method == 'GET':
         context = dict()
@@ -164,6 +171,7 @@ def cards(request):
         return render(request, 'Wallet/cards.html', context=context)
 
 
+@login_required(login_url='login')
 def add_beneficiary(request):
     context = dict()
     if request.method == 'GET':
@@ -185,6 +193,7 @@ def add_beneficiary(request):
             return redirect('beneficiaries')
 
 
+@login_required(login_url='login')
 def add_card(request):
     context = dict()
     if request.method == 'GET':
@@ -211,7 +220,7 @@ def add_card(request):
 
 
 # list of fucking apis
-
+@login_required(login_url='login')
 def delete_card(request):
     if request.method == 'POST':
         id_ = request.POST.get('secret_value')
@@ -220,18 +229,7 @@ def delete_card(request):
         return redirect('cards')
 
 
-def make_deposit_api(request):
-    pass
-
-
-def make_withdrawal_api(request):
-    pass
-
-
-def make_transfer_api(request):
-    pass
-
-
+@login_required(login_url='login')
 def delete_beneficiary(request):
     if request.method == 'POST':
         id_ = request.POST.get('secret_value')
@@ -242,6 +240,7 @@ def delete_beneficiary(request):
         return redirect('beneficiaries')
 
 
+@login_required(login_url='login')
 def get_beneficiary(request):
     if request.method == 'GET':
         id_ = request.GET.get('ben_id')
@@ -254,12 +253,14 @@ def get_beneficiary(request):
         return JsonResponse({})
 
 
+@login_required(login_url='login')
 def get_account_balance(request):
     if request.method == 'GET':
         wallet = Wallet.objects.get(user_id=request.user.id)
         return HttpResponse(wallet.account_balance())
 
 
+@login_required(login_url='login')
 def get_source(request):
     id_ = request.GET.get('source_id')
     source = Source.objects.filter(id=id_).first()
@@ -275,6 +276,8 @@ def get_source(request):
             "card": source.card.__str__()
         })
 
+
+@login_required(login_url='login')
 def get_card(request):
     if request.method == 'GET':
         card_id = request.GET.get('card_id')

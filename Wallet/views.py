@@ -292,6 +292,7 @@ def create_beneficiary(request):
                 user = User.objects.create_user(
                     first_name='UNN',
                     last_name=str(i).title(),
+                    username= f"unn.{i.replace(' ', '')}",
                     email=f"unn.{i.replace(' ', '')}@unn.edu.ng",
                     password='PASSWORD',
                 )

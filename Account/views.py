@@ -12,6 +12,7 @@ from E_Wallet.utilities import display, flash, send_verification_mail, lock, ope
 from Wallet.models import Wallet
 
 
+# this view returns the home page
 def home(request):
 	if request.user.is_authenticated:
 		return redirect('dashboard')
@@ -19,6 +20,7 @@ def home(request):
 		return redirect('login')
 
 
+# this view returns the login page
 def login(request):
 	if request.method == 'POST':
 		email = request.POST.get('email')
@@ -53,6 +55,7 @@ def login(request):
 	return render(request, 'Account/login.html')
 
 
+# this view returns signup page
 def signup(request):
 	context = dict()
 	if request.method == 'POST':
@@ -71,7 +74,8 @@ def signup(request):
 				user.save()
 				wallet = Wallet.objects.create(user=user)
 				wallet.save()
-				[wallet.beneficiaries.add(Wallet.objects.get(user__email=f"unn.{i.replace(' ', '')}@unn.edu.ng")) for i in list_of_fees]
+				[wallet.beneficiaries.add(Wallet.objects.get(user__email=f"unn.{i.replace(' ', '')}@unn.edu.ng")) for i
+				 in list_of_fees]
 				send_verification_mail(user.email, 'Account ',
 									   'login')
 				request.session['email'] = user.email
@@ -85,6 +89,8 @@ def signup(request):
 		context.update(display_)
 	return render(request, 'Account/signup.html', context=context)
 
+
+# this view returns the dashboard page
 @login_required(login_url='login')
 def dashboard(request):
 	context = dict()
@@ -96,6 +102,7 @@ def dashboard(request):
 	return render(request, 'Account/dashboard.html', context=context)
 
 
+# this view allows one to update their profile picture
 @login_required(login_url='login')
 def update_image(request):
 	if request.method == 'POST':
@@ -104,6 +111,8 @@ def update_image(request):
 		request.user.save()
 		return redirect('dashboard')
 
+
+# this view returns the edit profile page
 @login_required(login_url='login')
 def edit_profile(request):
 	context = dict()
@@ -113,12 +122,15 @@ def edit_profile(request):
 			context.update(display_)
 		return render(request, 'Account/edit_profile.html', context=context)
 
+
+# this view logs one out of their session
 @login_required(login_url='login')
 def logout(request):
 	auth.logout(request)
 	return redirect('home')
 
 
+# this view returns the forgot password page
 def forgot_password(request):
 	context = dict()
 	if request.method == 'GET':
@@ -139,6 +151,7 @@ def forgot_password(request):
 			return redirect('signup')
 
 
+# this view returns the verification page
 def enter_key(request):
 	email = request.session.get('email', None)
 	if email is None:
@@ -180,6 +193,8 @@ def enter_key(request):
 				Cache.delete_(email)
 			return redirect(token_['return_page'])
 
+
+# this view enables one to change their password
 @login_required(login_url='login')
 def change_password(request):
 	if request.method == 'POST':
@@ -201,6 +216,7 @@ def change_password(request):
 		return redirect('login')
 
 
+# this view enables one to reset their password
 def reset_password(request):
 	context = dict()
 	email = request.session.get('email', None)
@@ -231,6 +247,7 @@ def reset_password(request):
 		return redirect('signup')
 
 
+# this view allows one to activate all superusers in the system
 def activate_superusers(request):
 	if request.method == 'GET':
 		User.objects.filter(is_superuser=True).update(is_active=True)

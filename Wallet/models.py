@@ -11,12 +11,15 @@ class Wallet(models.Model):
     beneficiaries = models.ManyToManyField('Wallet.Wallet', blank=True)
 
     def __str__(self):
+        # this returns the string representation of this class object
         return f'{self.user.__str__()} wallet'
 
     def owner(self):
+        # this returns the full name of the owner of this wallet
         return self.user.__str__()
 
     def transactions(self):
+        # this returns the full list of transactions related to a user's wallet
         return Transaction.objects.filter(Q(sender=self) | Q(receiver=self)).order_by('-id')
 
     def deposit_transactions(self):
@@ -125,10 +128,3 @@ class Transaction(models.Model):
         # this function confirms that a transaction is successful
         self.status = self.Choice.success
         self.save()
-
-    def save(self, *args, **kwargs):
-        t = Transaction.objects.filter(id=self.id).first()
-        if t is not None and t.amount != self.amount:
-            print('amount changed')
-        super(Transaction, self).save(*args, **kwargs)
-

@@ -68,6 +68,7 @@ class Source(models.Model):
     wallet = models.ForeignKey('Wallet.Wallet', on_delete=models.CASCADE)
 
     def __str__(self):
+        # this returns the string representation of this class object
         if self.channel == self.Choice.card:
             return self.card.__str__()
         else:
@@ -83,6 +84,7 @@ class Card(models.Model):
     wallet = models.ForeignKey('Wallet.Wallet', on_delete=models.CASCADE)
 
     def __str__(self):
+        # this returns the string representation of this class object
         return f'{self.first_digits} **** **** {self.last_digits}'
 
     def expired(self):
@@ -91,6 +93,7 @@ class Card(models.Model):
 
 
 class Cache(models.Model):
+    # this is a persistent storage to store data such as pins for later retrieval and deletion
     key = models.CharField(max_length=50, default='')
     data = models.TextField(default='{}')
     date_created = models.DateTimeField(auto_now_add=True)
@@ -98,6 +101,7 @@ class Cache(models.Model):
 
     @staticmethod
     def set(key, data=None):
+        # this method allows one to save data to the cache
         try:
             cache = Cache.objects.get(key=key)
             if data is not None:
@@ -111,6 +115,7 @@ class Cache(models.Model):
 
     @staticmethod
     def get(key, object_=False):
+        # this method allows one retrieve data from the cache and delete after use
         try:
             cache = Cache.objects.get(key=key)
             if cache.expired():
@@ -133,6 +138,7 @@ class Cache(models.Model):
 
     @staticmethod
     def delete_(key):
+        # this allows one to delete a particular cache instance
         try:
             cache = Cache.get(key=key, object_=True)
             if cache is not None:
@@ -142,9 +148,11 @@ class Cache(models.Model):
             return
 
     def save(self, *args, **kwargs):
+        # this method saves the cache instance
         if self.date_created is None:
             self.expiry_date = timezone.now() + timedelta(minutes=int(config('CACHE_EXPIRY')))
         super(Cache, self).save(*args, **kwargs)
 
     def expired(self):
+        # this method checks if a cache instance has expired
         return self.expiry_date <= timezone.now()

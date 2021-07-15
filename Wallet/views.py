@@ -14,7 +14,7 @@ from Account.models import User, Card, Source
 from E_Wallet.utilities import display, flash, lock, banks, list_of_fees
 from Wallet.models import Transaction, Wallet
 
-
+# this view returns a deposit page
 @login_required(login_url='login')
 def deposit(request):
     context = dict()
@@ -57,7 +57,7 @@ def deposit(request):
         flash(request, 'Deposit Transaction is successful', 'success')
         return redirect('dashboard')
 
-
+# this view returns the page that enables one to make the transfer
 @login_required(login_url='login')
 def transfer(request):
     context = dict()
@@ -83,7 +83,7 @@ def transfer(request):
             flash(request, 'The password is incorrect', 'danger')
             return redirect('login')
 
-
+# this view returns the page that enables one make withdrawals
 @login_required(login_url='login')
 def withdraw(request):
     context = dict()
@@ -120,7 +120,7 @@ def withdraw(request):
         flash(request, 'Withdrawal is successful', 'success')
         return redirect('dashboard')
 
-
+# this view enables one to view all types of transactions
 @login_required(login_url='login')
 def transactions(request):
     context = dict()
@@ -146,7 +146,7 @@ def transactions(request):
         context.update(display_)
     return render(request, 'Wallet/transactions.html', context=context)
 
-
+# this view enables one to view the list of beneficiaries
 @login_required(login_url='login')
 def beneficiaries(request):
     context = dict()
@@ -158,7 +158,7 @@ def beneficiaries(request):
             context.update(display_)
         return render(request, 'Wallet/beneficiaries.html', context=context)
 
-
+# this view returns the list of cards one has
 @login_required(login_url='login')
 def cards(request):
     if request.method == 'GET':
@@ -170,7 +170,7 @@ def cards(request):
             context.update(display_)
         return render(request, 'Wallet/cards.html', context=context)
 
-
+# this view allows one add a new beneficiary
 @login_required(login_url='login')
 def add_beneficiary(request):
     context = dict()
@@ -192,7 +192,7 @@ def add_beneficiary(request):
             flash(request, 'Beneficiary added successfully', 'success')
             return redirect('beneficiaries')
 
-
+# this view allows someone to add a new card
 @login_required(login_url='login')
 def add_card(request):
     context = dict()
@@ -219,7 +219,7 @@ def add_card(request):
             return redirect('cards')
 
 
-# list of fucking apis
+# this view that allows one to delete a card
 @login_required(login_url='login')
 def delete_card(request):
     if request.method == 'POST':
@@ -228,7 +228,7 @@ def delete_card(request):
         flash(request, 'Card deleted successfully', 'success')
         return redirect('cards')
 
-
+# this view that allows one to delete beneficiaries
 @login_required(login_url='login')
 def delete_beneficiary(request):
     if request.method == 'POST':
@@ -239,7 +239,7 @@ def delete_beneficiary(request):
         flash(request, 'Beneficiary removed successfully', 'success')
         return redirect('beneficiaries')
 
-
+# this view allows one to fetch a beneficiary's details
 @login_required(login_url='login')
 def get_beneficiary(request):
     if request.method == 'GET':
@@ -252,14 +252,14 @@ def get_beneficiary(request):
             })
         return JsonResponse({})
 
-
+# this view returns the user's account balance
 @login_required(login_url='login')
 def get_account_balance(request):
     if request.method == 'GET':
         wallet = Wallet.objects.get(user_id=request.user.id)
         return HttpResponse(wallet.account_balance())
 
-
+# this view returns a source be it fund source or withdrawal channel
 @login_required(login_url='login')
 def get_source(request):
     id_ = request.GET.get('source_id')
@@ -276,7 +276,7 @@ def get_source(request):
             "card": source.card.__str__()
         })
 
-
+# this view allows one to get a particular card details
 @login_required(login_url='login')
 def get_card(request):
     if request.method == 'GET':
@@ -284,7 +284,7 @@ def get_card(request):
         card = Card.objects.get(id=int(card_id))
         return HttpResponse(card.__str__())
 
-
+# this view creates the default beneficiaries
 def create_beneficiary(request):
     if request.method == 'GET' and request.user.is_superuser:
         try:

@@ -19,8 +19,13 @@ from django.urls import path, include
 
 from E_Wallet.settings import MEDIA_URL, MEDIA_ROOT
 
+# these are the list of URLs for the entire site
+
 urlpatterns = [
-    path('admin/', admin.site.urls),
-    path('', include('Account.urls')),
-    path('wallet/', include('Wallet.urls')),
-]+ static(MEDIA_URL, document_root=MEDIA_ROOT)
+				  # this includes all the urls for the admin
+				  path('admin/', admin.site.urls),
+				  # this includes all the URLs for user account
+				  path('', include('Account.urls')),
+				  # this includes all the URLs for the user wallet
+				  path('wallet/', include('Wallet.urls')),
+			  ] + static(MEDIA_URL, document_root=MEDIA_ROOT)

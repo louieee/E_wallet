@@ -18,6 +18,10 @@ from django.urls import path
 from .views import deposit, withdraw, transactions, cards, \
     beneficiaries, transfer, add_beneficiary, add_card, delete_card, \
     delete_beneficiary, get_account_balance, get_beneficiary, get_source, get_card, create_beneficiary
+
+
+# this are all the available URLs for the wallet
+
 urlpatterns = [
     path('deposit/', deposit, name="deposit"),
     path('withdraw/', withdraw, name="withdraw"),
